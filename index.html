@@ -482,6 +482,9 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .footer-bottom{ border-top:1px solid rgba(255,255,255,0.14); padding-top:20px; padding-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:0.8125rem; color:rgba(255,255,255,0.55); }
 .footer-bottom a{ color:rgba(255,255,255,0.55); }
 .footer-bottom a:hover{ color:#fff; }
+.footer-admin-link{ display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:rgba(255,255,255,0.35) !important; border:1px solid rgba(255,255,255,0.18); border-radius:999px; padding:5px 12px; transition:color .2s,border-color .2s,background .2s; }
+.footer-admin-link:hover{ color:rgba(255,255,255,0.85) !important; border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.06); }
+.footer-admin-link svg{ width:12px; height:12px; flex-shrink:0; }
 
 /* ============================================
    TOAST
@@ -713,7 +716,10 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   </div>
   <div class="container footer-bottom">
     <span>&copy; 2026 PT Nusa Semaka Creativepreneur. Semua hak dilindungi.</span>
-    <a href="admin.html">Admin Login</a>
+    <a class="footer-admin-link" href="admin.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      Login As Admin 
+    </a>
   </div>
 </footer>
 
@@ -1714,7 +1720,7 @@ document.getElementById('pageRoot').innerHTML = `
         </div>
         <div class="contact-card">
           <span class="contact-card-icon">${ic('clock','icon-sm')}</span>
-          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc">Senin – Sabtu, 08.00 – 17.00 WIB</div></div>
+          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc">Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB</div></div>
         </div>
         <div class="contact-card" style="border:none; padding-left:0; background:transparent">
           <div>
@@ -1738,11 +1744,11 @@ document.getElementById('pageRoot').innerHTML = `
 `;
 
 /* ============================================================
-   LIVE DATA (Supabase) — opsional.
+   LIVE DATA (Supabase) â€” opsional.
    Kalau config.js sudah diisi & Supabase bisa diakses, data di atas
    (PRODUCTS/ARTICLES/FAQS) akan ditimpa dengan data terbaru dari
    database. Kalau belum dikonfigurasi atau gagal diakses, situs
-   tetap jalan normal pakai data statis di atas — tidak pernah kosong.
+   tetap jalan normal pakai data statis di atas â€” tidak pernah kosong.
    ============================================================ */
 function withTimeout(promise, ms){
   return Promise.race([
