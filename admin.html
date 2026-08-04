@@ -456,6 +456,23 @@ async function uploadImage(bucket, file){
   return data.publicUrl;
 }
 
+// Menghapus file lama di storage berdasarkan public URL-nya.
+// Dipanggil setiap kali gambar diganti atau produk/artikel dihapus,
+// supaya file lama tidak menumpuk di bucket.
+async function deleteImageByUrl(bucket, url){
+  if (!url) return;
+  try{
+    const marker = `/storage/v1/object/public/${bucket}/`;
+    const idx = url.indexOf(marker);
+    if (idx === -1) return; // bukan URL dari bucket ini, lewati
+    const path = decodeURIComponent(url.slice(idx + marker.length));
+    const { error } = await sb.storage.from(bucket).remove([path]);
+    if (error) console.warn('Gagal menghapus gambar lama:', error.message);
+  } catch(err){
+    console.warn('Gagal menghapus gambar lama:', err);
+  }
+}
+
 /* ============================================================
    PRODUCTS
    ============================================================ */
@@ -581,7 +598,11 @@ async function saveProduct(e, existing){
 
     const file = document.getElementById('pfImage').files[0];
     let thumbnail_url = existing ? existing.thumbnail_url : null;
-    if (file) thumbnail_url = await uploadImage('products', file);
+    if (file){
+      const oldUrl = existing ? existing.thumbnail_url : null;
+      thumbnail_url = await uploadImage('products', file);
+      if (oldUrl) await deleteImageByUrl('products', oldUrl); // hapus gambar lama setelah upload baru sukses
+    }
 
     const showPrice = document.getElementById('pfShowPrice').checked;
     const priceVal = document.getElementById('pfPrice').value;
@@ -620,8 +641,10 @@ async function saveProduct(e, existing){
 
 async function deleteProduct(id){
   if (!confirm('Hapus produk ini? Tindakan ini tidak bisa dibatalkan.')) return;
+  const p = CACHE.products.find(x=>x.id===id);
   const { error } = await sb.from('products').delete().eq('id', id);
   if (error){ toast('Gagal menghapus: '+error.message, true); return; }
+  if (p && p.thumbnail_url) await deleteImageByUrl('products', p.thumbnail_url);
   toast('Produk dihapus.');
   loadProducts();
 }
@@ -729,7 +752,11 @@ async function saveArticle(e, existing){
   try{
     const file = document.getElementById('afImage').files[0];
     let cover_url = existing ? existing.cover_url : null;
-    if (file) cover_url = await uploadImage('articles', file);
+    if (file){
+      const oldUrl = existing ? existing.cover_url : null;
+      cover_url = await uploadImage('articles', file);
+      if (oldUrl) await deleteImageByUrl('articles', oldUrl); // hapus gambar lama setelah upload baru sukses
+    }
 
     const payload = {
       title: document.getElementById('afTitle').value.trim(),
@@ -763,8 +790,10 @@ async function saveArticle(e, existing){
 
 async function deleteArticle(id){
   if (!confirm('Hapus artikel ini? Tindakan ini tidak bisa dibatalkan.')) return;
+  const a = CACHE.articles.find(x=>x.id===id);
   const { error } = await sb.from('articles').delete().eq('id', id);
   if (error){ toast('Gagal menghapus: '+error.message, true); return; }
+  if (a && a.cover_url) await deleteImageByUrl('articles', a.cover_url);
   toast('Artikel dihapus.');
   loadArticles();
 }
