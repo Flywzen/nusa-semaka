@@ -125,24 +125,44 @@ tr:hover td{ background:var(--surface); }
 .hidden{ display:none !important; }
 .spin{ width:16px; height:16px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ---------- mobile topbar + drawer ---------- */
+.mobile-topbar{ display:none; }
+.sidebar-overlay{ display:none; }
 @media(max-width:800px){
   .app{ flex-direction:column; }
-  .sidebar{ width:100%; height:auto; position:static; flex-direction:row; align-items:center; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:12px; gap:4px; }
-  .sidebar-brand{ display:none; }
-  /* Was `display:none` here, which hid "Halaman Utama" (back to site) and
-     "Keluar" (logout) entirely on mobile — the exact bug being fixed.
-     Instead, keep them visible and pin them to the right edge of the
-     horizontally-scrolling nav (position:sticky within the scrollable
-     .sidebar), so they're always reachable without any horizontal
-     scrolling and never end up positioned off-screen. */
-  .sidebar-foot{
-    display:flex; flex-direction:row; gap:4px; flex-shrink:0;
-    margin:0 0 0 auto; padding:0 0 0 10px; border-top:none;
-    position:sticky; right:0;
-    background:var(--maroon);
-    box-shadow:-16px 0 14px -6px var(--maroon);
+
+  .mobile-topbar{
+    display:flex; align-items:center; gap:12px;
+    position:sticky; top:0; z-index:40;
+    background:var(--maroon); color:#fff;
+    padding:calc(env(safe-area-inset-top, 0px) + 12px) 16px 12px;
   }
-  .sidebar-foot .nav-item{ width:auto; white-space:nowrap; }
+  .mobile-topbar .brand{ font-weight:800; font-size:15px; }
+  .hamburger-btn{
+    display:flex; align-items:center; justify-content:center;
+    width:36px; height:36px; flex-shrink:0;
+    background:rgba(255,255,255,.12); border:none; border-radius:var(--r-sm); color:#fff; padding:0;
+  }
+  .hamburger-btn svg{ width:20px; height:20px; }
+
+  .sidebar{
+    position:fixed; top:0; left:0; height:100vh; width:250px;
+    flex-direction:column; overflow-x:visible; overflow-y:auto;
+    padding:calc(env(safe-area-inset-top, 0px) + 20px) 16px 20px;
+    transform:translateX(-100%); transition:transform .22s var(--ease-out);
+    z-index:60; box-shadow:var(--shadow-2);
+  }
+  .sidebar.is-open{ transform:translateX(0); }
+  .sidebar-brand, .sidebar-foot{ display:flex; flex-direction:column; gap:4px; }
+  .sidebar-brand{ display:block; }
+
+  .sidebar-overlay{
+    display:block; position:fixed; inset:0; background:rgba(46,40,32,.45);
+    z-index:55; opacity:0; pointer-events:none; transition:opacity .2s var(--ease-out);
+  }
+  .sidebar-overlay.is-open{ opacity:1; pointer-events:auto; }
+
   .main{ padding:20px 16px; }
   .form-grid{ grid-template-columns:1fr; }
 }
@@ -187,14 +207,23 @@ tr:hover td{ background:var(--surface); }
      APP SHELL
 ============================================================ -->
 <div id="appShell" class="app hidden">
-  <aside class="sidebar">
+
+  <div class="mobile-topbar">
+    <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Buka menu" aria-expanded="false" id="hamburgerBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <div class="brand">Nusa Semaka <span style="opacity:.7;font-weight:500">· Admin</span></div>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">Nusa Semaka<span>Admin Panel</span></div>
     <button class="nav-item is-active" data-page="products" onclick="switchPage('products')">Produk</button>
     <button class="nav-item" data-page="articles" onclick="switchPage('articles')">Artikel</button>
     <button class="nav-item" data-page="faq" onclick="switchPage('faq')">FAQ</button>
     <button class="nav-item" data-page="settings" onclick="switchPage('settings')">Pengaturan</button>
     <div class="sidebar-foot">
-      <a class="nav-item" href="index.html" target="_blank" rel="noopener"> Halaman Utama</a>
+      <a class="nav-item" href="index.html" target="_blank" rel="noopener" onclick="closeSidebar()"> Halaman Utama</a>
       <button class="nav-item" onclick="doLogout()">Keluar</button>
     </div>
   </aside>
@@ -396,6 +425,21 @@ function switchPage(page){
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     el.classList.toggle('is-active', el.dataset.page===page);
   });
+  closeSidebar();
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('is-open');
+  document.getElementById('sidebarOverlay').classList.toggle('is-open');
+  const btn = document.getElementById('hamburgerBtn');
+  btn.setAttribute('aria-expanded', document.getElementById('sidebar').classList.contains('is-open'));
+}
+
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('is-open');
+  document.getElementById('sidebarOverlay').classList.remove('is-open');
+  const btn = document.getElementById('hamburgerBtn');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
 }
 
 /* ============================================================
