@@ -945,7 +945,7 @@ let SETTINGS = {
   email: 'nusa.semaka@gmail.com',
   phone: '0811-1011-6812',
   whatsapp: WA_NUMBER,
-  business_hours: 'Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB',
+  business_hours: 'Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB',
   google_maps: '',
   instagram: 'https://instagram.com/nusasemakaofficial',
   facebook: '',
@@ -981,7 +981,7 @@ function syncWaLinks(){
 
 /* ============================================================
    APPLY SETTINGS ke seluruh elemen di halaman (header, footer,
-   halaman Kontak) â€” dipanggil setelah data settings dari
+   halaman Kontak) Ã¢â‚¬â€ dipanggil setelah data settings dari
    Supabase berhasil dimuat.
    ============================================================ */
 function applySettings(s){
@@ -1029,8 +1029,14 @@ function applySettings(s){
 
   const mapFrame = document.getElementById('contactMapFrame');
   if (mapFrame){
-    mapFrame.src = SETTINGS.google_maps
-      ? SETTINGS.google_maps
+    // Jaga-jaga kalau field google_maps di database berisi seluruh kode
+    // <iframe ...></iframe> (hasil copy-paste langsung dari Google Maps),
+    // bukan cuma URL src-nya saja.
+    const rawMaps = (SETTINGS.google_maps || '').trim();
+    const srcMatch = rawMaps.match(/src=["']([^"']+)["']/i);
+    const cleanMaps = srcMatch ? srcMatch[1] : rawMaps;
+    mapFrame.src = cleanMaps
+      ? cleanMaps
       : 'https://www.google.com/maps?q=' + encodeURIComponent(SETTINGS.address) + '&output=embed';
   }
 
@@ -1821,7 +1827,7 @@ document.getElementById('pageRoot').innerHTML = `
         </div>
         <div class="contact-card">
           <span class="contact-card-icon">${ic('clock','icon-sm')}</span>
-          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB</div></div>
+          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB</div></div>
         </div>
         <div class="contact-card" style="border:none; padding-left:0; background:transparent">
           <div>
@@ -1842,7 +1848,8 @@ document.getElementById('pageRoot').innerHTML = `
       </div>
       <div>
         <div class="map-frame">
-<iframe id="contactMapFrame" src="https://www.google.com/maps?q=...&output=embed" referrerpolicy="no-referrer-when-downgrade" title="Lokasi Nusa Semaka Creativepreneur"></iframe>
+          <iframe id="contactMapFrame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d969.8122007116646!2d105.28327996610176!3d-5.3633432741577804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e40c5d6ed09ce5d%3A0xcad92e1e0faff47a!2sCp%20group!5e1!3m2!1sen!2sid!4v1785888898370!5m2!1sen!2sid" referrerpolicy="no-referrer-when-downgrade" title="Lokasi Nusa Semaka Creativepreneur"></iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -1850,11 +1857,11 @@ document.getElementById('pageRoot').innerHTML = `
 `;
 
 /* ============================================================
-   LIVE DATA (Supabase) â€” opsional.
+   LIVE DATA (Supabase) Ã¢â‚¬â€ opsional.
    Kalau config.js sudah diisi & Supabase bisa diakses, data di atas
    (PRODUCTS/ARTICLES/FAQS) akan ditimpa dengan data terbaru dari
    database. Kalau belum dikonfigurasi atau gagal diakses, situs
-   tetap jalan normal pakai data statis di atas â€” tidak pernah kosong.
+   tetap jalan normal pakai data statis di atas Ã¢â‚¬â€ tidak pernah kosong.
    ============================================================ */
 function withTimeout(promise, ms){
   return Promise.race([
