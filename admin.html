@@ -289,7 +289,7 @@ tr:hover td{ background:var(--surface); }
             <div class="field"><label>No. WhatsApp <span class="hint">format: 62xxxxxxxxxx</span></label><input type="text" id="setWhatsapp"></div>
             <div class="field"><label>Telepon (tampilan)</label><input type="text" id="setPhone"></div>
             <div class="field"><label>Jam Operasional</label><input type="text" id="setHours"></div>
-            <div class="field full"><label>Link Google Maps (embed URL)</label><input type="text" id="setMaps"></div>
+            <div class="field full"><label>Link Google Maps <span class="hint">(dari Google Maps: Share &gt; Embed a map. Boleh paste kode &lt;iframe&gt;-nya langsung atau cuma link src-nya aja)</span></label><input type="text" id="setMaps"></div>
             <div class="field"><label>Instagram</label><input type="text" id="setInstagram"></div>
             <div class="field"><label>Facebook</label><input type="text" id="setFacebook"></div>
             <div class="field"><label>YouTube</label><input type="text" id="setYoutube"></div>
@@ -893,6 +893,15 @@ async function loadSettings(){
   document.getElementById('setFacebook').value = data.facebook || '';
   document.getElementById('setYoutube').value = data.youtube || '';
 }
+// Kalau admin paste seluruh kode <iframe ...></iframe> dari tombol "Share > Embed
+// a map" di Google Maps, ambil otomatis nilai src="..."-nya. Kalau yang dipaste
+// memang cuma URL polos, dibiarkan apa adanya.
+function extractMapEmbedUrl(raw){
+  if (!raw) return '';
+  const trimmed = raw.trim();
+  const match = trimmed.match(/src=["']([^"']+)["']/i);
+  return match ? match[1] : trimmed;
+}
 document.getElementById('settingsForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const btn = document.getElementById('settingsSaveBtn');
@@ -905,7 +914,7 @@ document.getElementById('settingsForm').addEventListener('submit', async (e)=>{
       whatsapp: document.getElementById('setWhatsapp').value.trim(),
       phone: document.getElementById('setPhone').value.trim(),
       business_hours: document.getElementById('setHours').value.trim(),
-      google_maps: document.getElementById('setMaps').value.trim(),
+      google_maps: extractMapEmbedUrl(document.getElementById('setMaps').value),
       instagram: document.getElementById('setInstagram').value.trim(),
       facebook: document.getElementById('setFacebook').value.trim(),
       youtube: document.getElementById('setYoutube').value.trim()
