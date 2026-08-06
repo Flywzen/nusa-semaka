@@ -30,7 +30,7 @@
   --green-tint:#E7EFDA;
   --text:#2E2820;
   --text-muted:#7A7060;
-  --text-faint:#A69C8C;
+  --text-faint:#7C7361;
   --border:#E7DDC9;
   --border-strong:#D8CBAE;
   --white:#FFFFFF;
@@ -68,6 +68,13 @@ ul{ margin:0; padding:0; list-style:none; }
 h1,h2,h3,h4,p{ margin:0; }
 input,textarea{ font-family:inherit; font-size:1rem; }
 :focus-visible{ outline:2px solid var(--gold-dark); outline-offset:2px; border-radius:4px; }
+.skip-link{
+  position:fixed; top:-100px; left:16px; z-index:200;
+  background:var(--maroon); color:#fff; padding:12px 20px;
+  border-radius:12px; transition:top .2s;
+}
+.skip-link:focus{ top:16px; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
 .container{
   max-width:var(--maxw);
@@ -311,13 +318,6 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .timeline-title{ font-weight:700; font-size:0.9375rem; }
 .timeline-desc{ font-size:0.875rem; color:var(--text-muted); margin-top:3px; line-height:1.5; }
 
-.about-gallery-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:20px; }
-@media(min-width:640px){ .about-gallery-grid{ grid-template-columns:repeat(3,1fr); gap:18px; } }
-.about-gallery-item{ position:relative; aspect-ratio:4/3; border-radius:var(--r-card); overflow:hidden; border:1px solid var(--border); background:var(--surface-2); }
-.about-gallery-item img{ width:100%; height:100%; object-fit:cover; transition:transform 400ms var(--ease-out); }
-.about-gallery-item:hover img{ transform:scale(1.05); }
-.about-gallery-caption{ position:absolute; left:0; right:0; bottom:0; padding:10px 12px 8px; font-size:0.75rem; color:#fff; background:linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0)); }
-
 /* ============================================
    PRODUCT CARD
    ============================================ */
@@ -342,10 +342,10 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .card-body{ padding:14px; display:flex; flex-direction:column; gap:10px; flex:1; }
 .card-title{ font-size:0.9375rem; font-weight:700; line-height:1.3; }
 .card-price{ font-size:0.9375rem; font-weight:800; color:var(--maroon); }
-.card-price.is-hidden{ font-size:0.8125rem; font-weight:700; color:var(--text-faint); }
+.card-price.is-hidden{ font-size:0.8125rem; font-weight:700; color:#6E6558; }
 .card-actions{ display:flex; gap:8px; margin-top:auto; }
 .card-actions .btn{ flex:1; height:40px; padding:0 10px; font-size:0.8125rem; border-radius:12px; }
-.card-actions .btn-add{ flex:0 0 40px; width:40px; padding:0; }
+.card-actions .btn-add{ flex:0 0 44px; width:44px; padding:0; }
 
 /* category tint backgrounds */
 .tint-minuman{ background:var(--gold-tint); color:var(--gold-dark); }
@@ -360,6 +360,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
    PRODUCT DETAIL
    ============================================ */
 .breadcrumb{ display:flex; align-items:center; gap:6px; font-size:0.8125rem; color:var(--text-muted); flex-wrap:wrap; margin-bottom:24px; }
+.breadcrumb a{ display:inline-flex; align-items:center; min-height:32px; padding:2px 4px; }
 .breadcrumb a:hover{ color:var(--maroon); }
 .breadcrumb .sep{ color:var(--text-faint); }
 .breadcrumb .current{ color:var(--text); font-weight:600; }
@@ -572,11 +573,11 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .footer-social{ display:flex; gap:10px; margin-top:16px; }
 .footer-social a{ width:38px; height:38px; border-radius:var(--r-full); border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; color:#fff; transition:all 180ms; }
 .footer-social a:hover{ background:var(--gold); border-color:var(--gold); color:var(--maroon-dark); }
-.footer-bottom{ border-top:1px solid rgba(255,255,255,0.14); padding-top:20px; padding-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:0.8125rem; color:rgba(255,255,255,0.55); }
-.footer-bottom a{ color:rgba(255,255,255,0.55); }
+.footer-bottom{ border-top:1px solid rgba(255,255,255,0.14); padding-top:20px; padding-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; font-size:0.8125rem; color:rgba(255,255,255,0.78); }
+.footer-bottom a{ color:rgba(255,255,255,0.78); }
 .footer-bottom a:hover{ color:#fff; }
-.footer-admin-link{ display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:rgba(255,255,255,0.35) !important; border:1px solid rgba(255,255,255,0.18); border-radius:999px; padding:5px 12px; transition:color .2s,border-color .2s,background .2s; }
-.footer-admin-link:hover{ color:rgba(255,255,255,0.85) !important; border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.06); }
+.footer-admin-link{ display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; color:rgba(255,255,255,0.68) !important; border:1px solid rgba(255,255,255,0.35); border-radius:999px; padding:5px 12px; transition:color .2s,border-color .2s,background .2s; }
+.footer-admin-link:hover{ color:#fff !important; border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.06); }
 .footer-admin-link svg{ width:12px; height:12px; flex-shrink:0; }
 
 /* ============================================
@@ -774,6 +775,8 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 </head>
 <body>
 
+<a href="#pageRoot" class="skip-link">Langsung ke konten utama</a>
+
 <!-- ============================================
      HEADER
      ============================================ -->
@@ -802,9 +805,10 @@ input,textarea{ font-family:inherit; font-size:1rem; }
       </a>
       <button class="btn btn-ghost btn-icon cart-btn" onclick="openCart()" aria-label="Buka keranjang pesanan">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        <span class="cart-badge" id="cartBadge">0</span>
+        <span class="cart-badge" id="cartBadge" aria-hidden="true">0</span>
+        <span class="sr-only" id="cartBadgeSr" aria-live="polite">0 produk di keranjang</span>
       </button>
-      <button class="btn btn-ghost btn-icon hamburger" onclick="toggleMobileMenu()" aria-label="Buka menu">
+      <button class="btn btn-ghost btn-icon hamburger" onclick="toggleMobileMenu()" aria-label="Buka menu" aria-expanded="false" aria-controls="mobileMenu">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
       </button>
     </div>
@@ -884,8 +888,8 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 <!-- ============================================
      TOAST
      ============================================ -->
-<div class="toast" id="toast">
-  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>
   <span id="toastMsg">Produk ditambahkan ke pesanan.</span>
 </div>
 
@@ -893,7 +897,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
      CART DRAWER
      ============================================ -->
 <div class="overlay" id="cartOverlay" onclick="closeCart()"></div>
-<div class="drawer" id="cartDrawer" role="dialog" aria-label="Keranjang pesanan">
+<div class="drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Keranjang pesanan">
   <div class="drawer-handle"></div>
   <div class="drawer-header">
     <span class="drawer-title" id="drawerTitle">Pesanan Saya</span>
@@ -909,7 +913,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
      ADMIN PREVIEW MODAL
      ============================================ -->
 <div class="modal-overlay" id="adminOverlay" onclick="if(event.target===this)closeAdmin()">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Pratinjau panel admin">
     <button class="modal-close" onclick="closeAdmin()" aria-label="Tutup">
       <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -935,7 +939,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
      CERTIFICATE / DOCUMENT PREVIEW MODAL
      ============================================ -->
 <div class="modal-overlay" id="certModalOverlay" onclick="if(event.target===this)closeCertModal()">
-  <div class="modal modal--doc" role="dialog" aria-label="Pratinjau dokumen">
+  <div class="modal modal--doc" role="dialog" aria-modal="true" aria-label="Pratinjau dokumen">
     <div class="doc-modal-head">
       <div>
         <div class="doc-modal-org" id="certModalOrg">—</div>
@@ -982,10 +986,10 @@ let PRODUCTS = [
     desc:'Sabun cuci piring alami dari fermentasi eco-enzyme, ampuh mengangkat minyak namun tetap lembut di tangan. Aman untuk saluran air dan lingkungan.',
     specs:[['Volume','250 ml'],['Bahan utama','Eco-enzyme buah & sayur'],['Cocok untuk','Semua jenis peralatan dapur']] },
   { id:4, slug:'deterjen-pencuci-pakaian-eco-enzyme', name:'Deterjen Pencuci Pakaian Eco-Enzyme', cat:'rumah', price:null,
-    desc:'Deterjen cair berbahan dasar eco-enzyme, membersihkan pakaian tanpa meninggalkan residu bahan kimia keras.',
+    desc:'Deterjen cair berbahan dasar eco-enzyme yang membersihkan pakaian secara maksimal tanpa meninggalkan residu bahan kimia keras.',
     specs:[['Volume','500 ml'],['Bahan utama','Eco-enzyme alami'],['Cocok untuk','Mesin cuci & cuci tangan']] },
   { id:5, slug:'sabun-cuci-perlengkapan-bayi', name:'Sabun Cuci Perlengkapan Bayi', cat:'rumah', price:null,
-    desc:'Diformulasikan dari eco-enzyme untuk membersihkan botol dan perlengkapan bayi tanpa residu berbahaya.',
+    desc:'Diformulasikan khusus dari eco-enzyme untuk membersihkan botol dan perlengkapan bayi dengan lembut, tanpa residu berbahaya.',
     specs:[['Volume','250 ml'],['Bahan utama','Eco-enzyme alami'],['Cocok untuk','Botol susu & perlengkapan bayi']] },
   { id:6, slug:'detox-kaki-eco-enzyme', name:'Detox Kaki Eco-Enzyme', cat:'perawatan', price:null,
     desc:'Larutan rendam kaki dari eco-enzyme yang membantu melancarkan sirkulasi darah, meredakan pegal, dan menyegarkan tubuh setelah aktivitas harian.',
@@ -994,10 +998,10 @@ let PRODUCTS = [
     desc:'Cairan antiseptik alami hasil fermentasi buah yang membantu membersihkan luka ringan dan menjaga kebersihan tanpa bahan kimia keras.',
     specs:[['Volume','250 ml'],['Bahan utama','Eco-enzyme buah'],['Kegunaan','Antiseptik ringan & obat kumur']] },
   { id:8, slug:'face-serum-eco-enzyme', name:'Face Serum Eco-Enzyme', cat:'perawatan', price:150000, badge:'Baru',
-    desc:'Serum wajah dengan kandungan eco-enzyme, menyegarkan dan melembapkan kulit tanpa bahan kimia keras.',
+    desc:'Serum wajah dengan kandungan eco-enzyme yang membantu menyegarkan dan melembapkan kulit secara alami, tanpa bahan kimia keras.',
     specs:[['Volume','30 ml'],['Bahan utama','Eco-enzyme & bahan alami'],['Cocok untuk','Semua jenis kulit']] },
   { id:9, slug:'shampo-eco-enzyme', name:'Shampo Eco-Enzyme', cat:'perawatan', price:50000,
-    desc:'Shampo berbahan dasar eco-enzyme, membersihkan kulit kepala dengan lembut dan menjaga kesehatan rambut sehari-hari.',
+    desc:'Shampo alami berbahan dasar eco-enzyme yang membersihkan kulit kepala secara lembut dan menjaga kesehatan rambut sehari-hari.',
     specs:[['Volume','250 ml'],['Bahan utama','Eco-enzyme alami']] },
   { id:10, slug:'face-wash-premium-eco-enzyme', name:'Face Wash Premium Eco-Enzyme', cat:'perawatan', price:75000,
     desc:'Sabun cuci muka dengan formula eco-enzyme premium yang membersihkan wajah tanpa membuat kulit terasa kering.',
@@ -1014,27 +1018,27 @@ let ARTICLES = [
       'Selain aspek lingkungan, pelatihan ini juga membuka peluang ekonomi baru bagi peserta untuk memproduksi dan memasarkan produk eco-enzyme secara mandiri di lingkungan masing-masing.'
     ] },
   { id:2, slug:'apa-itu-fermentasi', cat:'Edukasi', title:'Apa Itu Fermentasi? Mengenal Proses di Balik Produk Kami', date:'3 Des 2025', read:'5 menit',
-    excerpt:'Sebelum menjadi kombucha maupun eco-enzyme, semua bermula dari satu proses alami yang sama: fermentasi.',
+    excerpt:'Sebelum menjadi kombucha maupun eco-enzyme, semua bermula dari satu proses alami yang sama: fermentasi. Yuk kenalan lebih dekat.',
     body:[
       'Fermentasi adalah proses alami di mana mikroorganisme seperti bakteri dan ragi mengubah gula menjadi asam, gas, atau alkohol. Proses inilah yang menjadi dasar dari hampir seluruh produk Nusa Semaka, mulai dari kombucha hingga eco-enzyme.',
       'Dalam pembuatan kombucha, kultur SCOBY bekerja mengubah larutan teh manis menjadi minuman kaya probiotik selama proses fermentasi berlangsung. Sementara pada eco-enzyme, sisa kulit buah dan gula difermentasi bersama air selama beberapa bulan hingga menghasilkan cairan multifungsi.',
       'Memahami proses ini penting agar masyarakat semakin percaya diri untuk mulai memfermentasi bahan-bahan alami di rumah masing-masing.'
     ] },
   { id:3, slug:'scoby-itu-hidup', cat:'Edukasi', title:'SCOBY Itu Hidup: Mengenal Sahabat Fermentasi Kombucha', date:'15 Des 2025', read:'3 menit',
-    excerpt:'Banyak yang bertanya-tanya, benarkah SCOBY di dalam toples kombucha benar-benar hidup?',
+    excerpt:'Banyak yang bertanya-tanya, benarkah SCOBY di dalam toples kombucha kita benar-benar hidup? Simak penjelasannya.',
     body:[
       'SCOBY atau Symbiotic Culture of Bacteria and Yeast adalah kultur hidup yang menjadi jantung dari proses fermentasi kombucha. Lapisan kenyal ini bekerja mengubah larutan teh manis menjadi minuman kaya asam organik dan probiotik.',
       'Karena SCOBY adalah organisme hidup, ia perlu dirawat dengan kondisi yang tepat: suhu ruang yang stabil, kebersihan alat, dan waktu fermentasi yang cukup. Nusa Semaka menjaga setiap tahapan ini dengan saksama agar kualitas kombucha tetap konsisten.'
     ] },
   { id:4, slug:'mitos-vs-fakta-kombucha', cat:'Edukasi', title:'Mitos vs Fakta Seputar Kombucha', date:'22 Des 2025', read:'4 menit',
-    excerpt:'Kombucha bikin mabuk? Harus diminum tiap hari? Kami luruskan mitos yang sering beredar di masyarakat.',
+    excerpt:'Kombucha bikin mabuk? Harus diminum tiap hari? Kami luruskan beberapa mitos yang sering beredar di masyarakat.',
     body:[
       'Salah satu mitos yang sering muncul adalah anggapan bahwa kombucha mengandung alkohol tinggi seperti minuman keras. Faktanya, kadar alkohol pada kombucha hasil fermentasi rumahan biasanya sangat rendah, jauh di bawah minuman beralkohol pada umumnya.',
       'Mitos lain menyebutkan kombucha wajib diminum setiap hari agar manfaatnya terasa. Faktanya, konsumsi yang cukup dan konsisten dalam jumlah wajar sudah dapat memberikan manfaat bagi pencernaan.',
       'Nusa Semaka selalu mendorong konsumen untuk mengenali produk yang dikonsumsi, termasuk proses pembuatannya, agar keputusan yang diambil didasari pemahaman yang tepat.'
     ] },
   { id:5, slug:'mengenal-postbiotik', cat:'Edukasi', title:'Mengenal Postbiotik: Manfaat Tersembunyi di Balik Kombucha', date:'5 Jan 2026', read:'4 menit',
-    excerpt:'Selain probiotik, kombucha juga mengandung postbiotik yang bermanfaat bagi tubuh. Apa itu postbiotik?',
+    excerpt:'Selain probiotik, ternyata kombucha juga mengandung postbiotik yang tak kalah bermanfaat bagi tubuh. Apa itu postbiotik?',
     body:[
       'Postbiotik adalah senyawa metabolit aktif yang dihasilkan dari kerja bakteri selama proses fermentasi, seperti asam glukonat, asam laktat, dan berbagai senyawa bioaktif lainnya.',
       'Berbeda dengan probiotik yang merupakan mikroba hidup, postbiotik sudah berupa hasil akhir metabolisme sehingga cenderung lebih stabil disimpan dan tetap memberikan manfaat bagi tubuh, termasuk mendukung kesehatan kulit dan sistem pencernaan.'
@@ -1055,7 +1059,7 @@ let FAQS = [
   { q:'Apakah bisa request pelatihan eco-enzyme untuk sekolah atau instansi kami?', a:'Bisa. Kami rutin mengadakan pelatihan untuk sekolah, instansi pemerintah, dan komunitas di seluruh Lampung. Silakan hubungi kami via WhatsApp untuk penjadwalan.' },
   { q:'Berapa lama proses pengiriman?', a:'Estimasi pengiriman akan dikonfirmasi langsung oleh tim kami melalui WhatsApp setelah pesanan diterima, tergantung lokasi Anda.' },
   { q:'Apa metode pembayaran yang tersedia?', a:'Pembayaran dilakukan melalui transfer setelah pesanan dikonfirmasi oleh tim kami via WhatsApp. Kami belum menyediakan pembayaran online di website ini.' },
-  { q:'Apa itu eco-enzyme?', a:'Eco-enzyme adalah cairan hasil fermentasi sisa kulit buah dan sayur. Kami memakainya sebagai bahan dasar produk pembersih dan perawatan alami.' },
+  { q:'Apa itu eco-enzyme?', a:'Eco-enzyme adalah cairan hasil fermentasi sisa kulit buah dan sayur yang kaya manfaat, digunakan sebagai bahan dasar produk pembersih dan perawatan alami kami.' },
 ];
 
 /* ============================================================
@@ -1152,7 +1156,7 @@ function ic(name, cls){
     download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
   };
   const extra = name==='arrowRight' ? ' icon-nudge' : '';
-  return `<svg class="${(cls||'icon')+extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${map[name]||''}</svg>`;
+  return `<svg class="${(cls||'icon')+extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${map[name]||''}</svg>`;
 }
 
 function money(n){
@@ -1188,98 +1192,6 @@ let SETTINGS = {
   facebook: '',
   youtube: ''
 };
-
-/* ============================================================
-   ABOUT CONTENT (halaman "Tentang Kami") â€” visi/misi & perjalanan.
-   Nilai di bawah ini dipakai selama data dari Supabase (tabel
-   `about_content`) belum/gagal dimuat, jadi halaman tidak pernah kosong.
-   Ikon misi berputar mengikuti daftar MISSION_ICONS di bawah.
-   ============================================================ */
-const MISSION_ICONS = ['graduation','leaf','users','sparkle'];
-let ABOUT_CONTENT = {
-  hero_title: 'PT Nusa Semaka Creativepreneur',
-  hero_lead: 'PT Nusa Semaka Creativepreneur berasal dari Bandar Lampung. Kami memberdayakan komunitas lewat pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukasi.',
-  misi: [
-    'Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.',
-    'Menghadirkan produk alami yang ramah lingkungan untuk kebutuhan sehari-hari.',
-    'Mendorong ekonomi kreatif berbasis komunitas di seluruh Lampung.',
-    'Mengedukasi masyarakat tentang gaya hidup yang lebih berkelanjutan.'
-  ],
-  perjalanan: [
-    { title:'Membangun komunitas di Bandar Lampung', desc:'Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.' },
-    { title:'Pelatihan Eco-Enzyme & Fruit Enzyme se-Provinsi Lampung', desc:'Menjadi fasilitator pelatihan bagi kader PKK dari berbagai kabupaten/kota di Lampung.' },
-    { title:'Berpartisipasi di Pasar Tematik Kota Metro', desc:'Memperkenalkan produk fermentasi alami langsung kepada masyarakat.' },
-    { title:'Terus tumbuh bersama komunitas', desc:'Melanjutkan misi pemberdayaan dan produk alami ke lebih banyak wilayah di Lampung.' }
-  ]
-};
-
-function applyAboutContent(a){
-  if (!a) return;
-  ABOUT_CONTENT = {
-    hero_title: a.hero_title || ABOUT_CONTENT.hero_title,
-    hero_lead: a.hero_lead || ABOUT_CONTENT.hero_lead,
-    misi: (Array.isArray(a.misi) && a.misi.length) ? a.misi : ABOUT_CONTENT.misi,
-    perjalanan: (Array.isArray(a.perjalanan) && a.perjalanan.length) ? a.perjalanan : ABOUT_CONTENT.perjalanan
-  };
-}
-
-function renderAboutContent(){
-  setText('aboutHeroTitle', ABOUT_CONTENT.hero_title);
-  setText('aboutHeroLead', ABOUT_CONTENT.hero_lead);
-
-  const misiEl = document.getElementById('aboutMissionList');
-  if (misiEl){
-    misiEl.innerHTML = ABOUT_CONTENT.misi.map((text,i)=>`
-      <div class="mission-item"><span class="mission-icon">${ic(MISSION_ICONS[i % MISSION_ICONS.length],'icon-sm')}</span><span class="mission-text">${text}</span></div>`).join('');
-  }
-
-  const timelineEl = document.getElementById('aboutTimeline');
-  if (timelineEl){
-    timelineEl.innerHTML = ABOUT_CONTENT.perjalanan.map(t=>`
-      <div class="timeline-item" data-reveal-item>
-        <div class="timeline-dot"></div>
-        <div><div class="timeline-title">${t.title||''}</div><div class="timeline-desc">${t.desc||''}</div></div>
-      </div>`).join('');
-  }
-}
-
-/* Kotak foto di sebelah "Visi & Misi Kami" (halaman Tentang) ini SENGAJA
-   memakai foto PERTAMA dari galeri yang sama (tabel `about_gallery`, lihat
-   ABOUT_PHOTOS) supaya bisa dikelola dari admin, menu "Galeri Tentang Kami".
-   Kalau galeri masih kosong, kotak ini tetap tampil dengan ikon + teks
-   bawaan seperti semula. */
-function renderAboutPageVisual(){
-  const box = document.getElementById('aboutPageVisual');
-  const caption = document.getElementById('aboutPageVisualCaption');
-  if (!box) return;
-  if (!ABOUT_PHOTOS.length) return; // biarkan ikon & teks bawaan
-  const photo = ABOUT_PHOTOS[0];
-  box.innerHTML = `<img src="${photo.image_url}" alt="${photo.caption||'Foto Nusa Semaka'}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`;
-  if (caption){
-    if (photo.caption){ caption.textContent = photo.caption; caption.style.display = ''; }
-    else { caption.style.display = 'none'; }
-  }
-}
-
-/* Galeri di halaman "Tentang Kami" ini SENGAJA memakai data yang sama
-   dengan galeri slideshow di beranda (tabel `about_gallery`, lihat
-   ABOUT_PHOTOS) supaya admin cukup kelola foto di satu tempat saja. */
-function renderAboutPageGallery(){
-  const section = document.getElementById('aboutGallerySection');
-  const grid = document.getElementById('aboutGalleryGrid');
-  if (!section || !grid) return;
-  if (!ABOUT_PHOTOS.length){
-    section.style.display = 'none';
-    grid.innerHTML = '';
-    return;
-  }
-  section.style.display = '';
-  grid.innerHTML = ABOUT_PHOTOS.map(p => `
-    <div class="about-gallery-item" data-reveal-item>
-      <img src="${p.image_url}" alt="${p.caption||'Foto Nusa Semaka'}" loading="lazy">
-      ${p.caption ? `<div class="about-gallery-caption">${p.caption}</div>` : ''}
-    </div>`).join('');
-}
 
 function setText(id, value){
   const el = document.getElementById(id);
@@ -1396,6 +1308,11 @@ function go(page, opts){
   });
   closeMobileMenu();
   window.scrollTo(0,0);
+  const heading = target && target.querySelector('h1');
+  if(heading){
+    heading.setAttribute('tabindex','-1');
+    heading.focus({preventScroll:true});
+  }
   if(ROUTES[page] && location.hash !== ROUTES[page]) location.hash = ROUTES[page];
 }
 
@@ -1424,8 +1341,17 @@ function router(){
   go('home');
 }
 
-function toggleMobileMenu(){ document.getElementById('mobileMenu').classList.toggle('is-open'); }
-function closeMobileMenu(){ document.getElementById('mobileMenu').classList.remove('is-open'); }
+function toggleMobileMenu(){
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.querySelector('.hamburger');
+  const open = menu.classList.toggle('is-open');
+  if(btn) btn.setAttribute('aria-expanded', String(open));
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('is-open');
+  const btn = document.querySelector('.hamburger');
+  if(btn) btn.setAttribute('aria-expanded','false');
+}
 
 /* ============================================================
    RENDER: PRODUCT CARD / GRID
@@ -1442,7 +1368,7 @@ function productCard(p, i){
       ${!p.thumbnail_url ? ic(c.icon,'icon-lg') : ''}
     </div>
     <div class="card-body">
-      <div class="card-title" onclick="openProduct(${p.id})" style="cursor:pointer">${p.name}</div>
+      <h3 class="card-title" onclick="openProduct(${p.id})" style="cursor:pointer;margin:0">${p.name}</h3>
       ${priceHtml}
       <div class="card-actions">
         <button class="btn btn-secondary" onclick="openProduct(${p.id})">Detail</button>
@@ -1552,7 +1478,7 @@ function articleCard(a){
     </div>
     <div class="card-article-body">
       <span class="badge badge-maroon" style="align-self:flex-start">${a.cat}</span>
-      <div class="card-article-title" onclick="openArticle(${a.id})" style="cursor:pointer">${a.title}</div>
+      <h3 class="card-article-title" onclick="openArticle(${a.id})" style="cursor:pointer;margin:0">${a.title}</h3>
       <div class="card-article-excerpt">${a.excerpt}</div>
       <div class="card-article-meta">
         ${ic('calendar','icon-sm')}<span>${a.date}</span><span>&middot;</span>${ic('clock','icon-sm')}<span>${a.read} baca</span>
@@ -1603,12 +1529,14 @@ function openArticle(id){
    RENDER: FAQ
    ============================================================ */
 function faqItem(f, i, openFirst){
+  const id = `faq-panel-${i}-${Math.random().toString(36).slice(2,7)}`;
+  const isOpen = i===0 && openFirst;
   return `
-  <div class="faq-item ${i===0 && openFirst ? 'is-open':''}">
-    <button class="faq-q" onclick="toggleFaq(this)">
+  <div class="faq-item ${isOpen ? 'is-open':''}">
+    <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="${isOpen}" aria-controls="${id}">
       <span>${f.q}</span>${ic('chevronDown','icon chev')}
     </button>
-    <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+    <div class="faq-a" id="${id}"><div class="faq-a-inner">${f.a}</div></div>
   </div>`;
 }
 function renderFaqFull(){
@@ -1629,11 +1557,14 @@ function toggleFaq(btn){
   container.querySelectorAll('.faq-item').forEach(el=>{
     if(el!==item && el.classList.contains('is-open')){
       el.classList.remove('is-open');
+      const otherBtn = el.querySelector('.faq-q');
+      if(otherBtn) otherBtn.setAttribute('aria-expanded','false');
       animateFaqPanel(el, false);
     }
   });
 
   item.classList.toggle('is-open', willOpen);
+  btn.setAttribute('aria-expanded', String(willOpen));
   animateFaqPanel(item, willOpen);
 }
 
@@ -1741,6 +1672,17 @@ function certPlay(){
   certPause();
   certState.autoTimer = setInterval(certAutoAdvance, 6000);
 }
+function toggleCertAutoplay(){
+  const btn = document.getElementById('certPlayToggle');
+  const playing = !!certState.autoTimer;
+  if(playing){
+    certPause();
+    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+  } else {
+    certPlay();
+    if(btn){ btn.textContent='⏸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+  }
+}
 
 function initCertCarousel(){
   const wrap = document.querySelector('.cert-carousel-wrap');
@@ -1766,7 +1708,13 @@ function initCertCarousel(){
 
   window.addEventListener('resize', ()=> certGoTo(certState.index));
 
-  certPlay();
+  if (REDUCE_MOTION) {
+    certPause();
+    const btn = document.getElementById('certPlayToggle');
+    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+  } else {
+    certPlay();
+  }
 }
 
 /* ============================================================
@@ -1828,15 +1776,42 @@ function openCertModal(id){
   const dl = document.getElementById('certModalDownload');
   dl.href = c.file;
   dl.setAttribute('download', c.file.split('/').pop());
+  lastFocused = document.activeElement;
   document.getElementById('certModalOverlay').classList.add('is-open');
+  document.getElementById('pageRoot').setAttribute('inert','');
+  trapFocus(document.querySelector('#certModalOverlay .modal'));
 }
 function closeCertModal(){
   document.getElementById('certModalOverlay').classList.remove('is-open');
+  document.getElementById('pageRoot').removeAttribute('inert');
   setTimeout(()=>{ document.getElementById('certModalFrame').src = ''; }, 240);
   certScheduleResume(1500);
+  if(lastFocused){ lastFocused.focus(); lastFocused = null; }
+}
+
+/* ---- Shared focus trap / overlay management ---- */
+let lastFocused = null;
+
+function trapFocus(container){
+  const focusables = container.querySelectorAll('a,button,input,textarea,[tabindex]:not([tabindex="-1"])');
+  if(!focusables.length) return;
+  focusables[0].focus();
+  container.addEventListener('keydown', function handler(e){
+    if(e.key === 'Escape'){ closeAnyOpenOverlay(); }
+    if(e.key !== 'Tab') return;
+    const first = focusables[0], last = focusables[focusables.length-1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+}
+
+function closeAnyOpenOverlay(){
+  if(document.getElementById('cartDrawer').classList.contains('is-open')) closeCart();
+  if(document.getElementById('adminOverlay').classList.contains('is-open')) closeAdmin();
+  if(document.getElementById('certModalOverlay').classList.contains('is-open')) closeCertModal();
 }
 document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape' && document.getElementById('certModalOverlay').classList.contains('is-open')) closeCertModal();
+  if(e.key === 'Escape') closeAnyOpenOverlay();
 });
 
 /* ============================================================
@@ -1859,6 +1834,8 @@ function updateCartBadge(bump){
   const badge = document.getElementById('cartBadge');
   badge.textContent = totalQty;
   badge.classList.toggle('is-visible', totalQty>0);
+  const sr = document.getElementById('cartBadgeSr');
+  if(sr) sr.textContent = `${totalQty} produk di keranjang`;
   if(bump){ badge.classList.remove('is-bump'); void badge.offsetWidth; badge.classList.add('is-bump'); }
 }
 
@@ -1942,15 +1919,20 @@ function updateCharCount(){
 }
 
 function openCart(){
+  lastFocused = document.activeElement;
   renderCartDrawer();
   document.getElementById('cartDrawer').classList.add('is-open');
   document.getElementById('cartOverlay').classList.add('is-open');
   document.getElementById('waFloat').classList.add('is-hidden');
+  document.getElementById('pageRoot').setAttribute('inert','');
+  trapFocus(document.getElementById('cartDrawer'));
 }
 function closeCart(){
   document.getElementById('cartDrawer').classList.remove('is-open');
   document.getElementById('cartOverlay').classList.remove('is-open');
   document.getElementById('waFloat').classList.remove('is-hidden');
+  document.getElementById('pageRoot').removeAttribute('inert');
+  if(lastFocused){ lastFocused.focus(); lastFocused = null; }
 }
 
 function sendWhatsAppOrder(){
@@ -1992,8 +1974,17 @@ function showToast(msg){
 /* ============================================================
    ADMIN MODAL
    ============================================================ */
-function openAdmin(){ document.getElementById('adminOverlay').classList.add('is-open'); }
-function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('is-open'); }
+function openAdmin(){
+  lastFocused = document.activeElement;
+  document.getElementById('adminOverlay').classList.add('is-open');
+  document.getElementById('pageRoot').setAttribute('inert','');
+  trapFocus(document.querySelector('#adminOverlay .modal'));
+}
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('is-open');
+  document.getElementById('pageRoot').removeAttribute('inert');
+  if(lastFocused){ lastFocused.focus(); lastFocused = null; }
+}
 
 /* ============================================================
    BUILD STATIC PAGE MARKUP
@@ -2010,8 +2001,8 @@ document.getElementById('pageRoot').innerHTML = `
     <div class="hero-grid">
       <div>
         <span class="eyebrow">Nusa Semaka Creativepreneur &middot; Bandar Lampung</span>
-        <h1 class="hero-title">Memberdayakan komunitas, menghasilkan produk alami dari <em>Lampung</em>.</h1>
-        <p class="hero-desc">Setiap produk yang kami hadirkan merupakan bagian dari upaya membangun kemandirian ekonomi dan memberdayakan masyarakat melalui kreativitas, inovasi, dan kolaborasi.</p>
+        <h1 class="hero-title">Memberdayakan komunitas, menghadirkan produk alami dari <em>Lampung</em>.</h1>
+        <p class="hero-desc">Kami melatih komunitas, sekolah, dan instansi membuat eco-enzyme dan produk fermentasi sendiri. Kami juga memproduksi kombucha, eco-enzyme, dan perawatan alami yang ramah lingkungan.</p>
         <div class="hero-actions">
           <button class="btn btn-primary" onclick="go('products')">Lihat Produk Kami</button>
           <a class="btn btn-secondary" id="heroWaBtn" target="_blank" rel="noopener">${ic('phone','icon-sm')} Chat via WhatsApp</a>
@@ -2046,8 +2037,8 @@ document.getElementById('pageRoot').innerHTML = `
       </div>
       <div data-reveal-item>
         <span class="eyebrow">Tentang Kami</span>
-        <h2 class="section-title" style="margin-top:10px">Sehat dan Natural</h2>
-        <p class="section-lead">Nusa Semaka Creativepreneur berdiri di Bandar Lampung dengan satu misi: membantu masyarakat memahami dan memanfaatkan fermentasi alami untuk hidup yang lebih sehat dan berkelanjutan.</p>
+        <h2 class="section-title" style="margin-top:10px">Lebih dari sekadar produk. Ini tentang memberdayakan.</h2>
+        <p class="section-lead">Nusa Semaka Creativepreneur lahir dari Bandar Lampung dengan satu misi: membantu masyarakat memahami dan memanfaatkan fermentasi alami untuk kehidupan yang lebih sehat dan berkelanjutan.</p>
         <div style="margin-top:20px">
           <button class="btn btn-secondary" onclick="go('about')">Selengkapnya Tentang Kami ${ic('arrowRight','icon-sm')}</button>
         </div>
@@ -2059,12 +2050,13 @@ document.getElementById('pageRoot').innerHTML = `
     <div class="section-head text-center" data-reveal>
       <span class="eyebrow" style="justify-content:center">Kepercayaan Anda, Prioritas Kami</span>
       <h2 class="section-title" style="margin-top:10px">Legalitas &amp; Sertifikasi</h2>
-      <p class="section-lead" style="max-width:560px; margin:10px auto 0">Nusa Semaka beroperasi dengan legalitas resmi dan tersertifikasi oleh lembaga berwenang di Indonesia.</p>
+      <p class="section-lead" style="max-width:560px; margin:10px auto 0">Nusa Semaka beroperasi dengan legalitas resmi dan telah melalui proses sertifikasi oleh lembaga berwenang di Indonesia.</p>
     </div>
     <div class="cert-carousel-wrap">
       <button class="cert-nav-btn cert-nav-prev" onclick="certNav(-1)" aria-label="Sertifikat sebelumnya">${ic('arrowRight','icon-sm')}</button>
       <div class="cert-track" id="certTrack"></div>
       <button class="cert-nav-btn cert-nav-next" onclick="certNav(1)" aria-label="Sertifikat berikutnya">${ic('arrowRight','icon-sm')}</button>
+      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">⏸</button>
     </div>
     <div class="cert-dots" id="certDots"></div>
   </div>
@@ -2116,26 +2108,28 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ ABOUT ============ -->
 <section class="page" id="page-about">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <span class="current">Tentang Kami</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current">Tentang Kami</li>
+  </ol>
+</nav>
     <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Tentang Kami</span>
-      <h1 class="section-title" style="margin-top:10px; font-size:2rem" id="aboutHeroTitle">PT Nusa Semaka Creativepreneur</h1>
-      <p class="section-lead" id="aboutHeroLead">PT Nusa Semaka Creativepreneur berasal dari Bandar Lampung. Kami memberdayakan komunitas lewat pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukasi.</p>
+      <h1 class="section-title" style="margin-top:10px; font-size:2rem">PT Nusa Semaka Creativepreneur</h1>
+      <p class="section-lead">Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.</p>
     </div>
 
     <div class="about-grid" data-reveal-group>
       <div data-reveal-item>
-        <div class="about-visual tint-minuman" id="aboutPageVisual" style="margin-bottom:8px">
+        <div class="about-visual tint-minuman" style="margin-bottom:8px">
           ${ic('leaf','icon-lg')}
         </div>
-        <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center" id="aboutPageVisualCaption">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
+        <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
       <div data-reveal-item>
-        <h3 style="font-size:1.25rem; font-weight:800">Visi &amp; Misi Kami</h3>
-        <div class="mission-list" id="aboutMissionList">
+        <h3 style="font-size:1.25rem; font-weight:800">Misi Kami</h3>
+        <div class="mission-list">
           <div class="mission-item"><span class="mission-icon">${ic('graduation','icon-sm')}</span><span class="mission-text">Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.</span></div>
           <div class="mission-item"><span class="mission-icon">${ic('leaf','icon-sm')}</span><span class="mission-text">Menghadirkan produk alami yang ramah lingkungan untuk kebutuhan sehari-hari.</span></div>
           <div class="mission-item"><span class="mission-icon">${ic('users','icon-sm')}</span><span class="mission-text">Mendorong ekonomi kreatif berbasis komunitas di seluruh Lampung.</span></div>
@@ -2174,10 +2168,10 @@ document.getElementById('pageRoot').innerHTML = `
       <span class="eyebrow">Perjalanan Kami</span>
       <h2 class="section-title" style="margin-top:10px">Beberapa Momen Nusa Semaka</h2>
     </div>
-    <div class="content-measure timeline" id="aboutTimeline" data-reveal-group>
+    <div class="content-measure timeline" data-reveal-group>
       <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
-        <div><div class="timeline-title">Membangun komunitas di Bandar Lampung</div><div class="timeline-desc">Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.</div></div>
+        <div><h4 class="timeline-title">Membangun komunitas di Bandar Lampung</h4><div class="timeline-desc">Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.</div></div>
       </div>
       <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
@@ -2194,14 +2188,6 @@ document.getElementById('pageRoot').innerHTML = `
     </div>
   </div>
 
-  <div class="container section" id="aboutGallerySection" style="display:none">
-    <div class="section-head" data-reveal>
-      <span class="eyebrow">Galeri Kami</span>
-      <h2 class="section-title" style="margin-top:10px">Momen &amp; Kegiatan Nusa Semaka</h2>
-    </div>
-    <div class="about-gallery-grid" id="aboutGalleryGrid" data-reveal-group></div>
-  </div>
-
   <div class="container section">
     <div class="cta-band" data-reveal>
       <h2>Ingin berkolaborasi atau mengundang pelatihan kami?</h2>
@@ -2214,14 +2200,16 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ PRODUCTS ============ -->
 <section class="page" id="page-products">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <span class="current">Produk</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current">Produk</li>
+  </ol>
+</nav>
     <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Katalog</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Produk Kami</h1>
-      <p class="section-lead">Kami membuat produk fermentasi alami dari eco-enzyme dan kombucha lewat proses tradisional yang ramah lingkungan.</p>
+      <p class="section-lead">Produk fermentasi alami dari eco-enzyme dan kombucha, dibuat dengan proses tradisional yang ramah lingkungan.</p>
     </div>
     <div class="chip-row" id="productFilters" style="margin-bottom:24px">
       <button class="chip is-active" onclick="filterProducts('all', this)">Semua Produk</button>
@@ -2236,11 +2224,13 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ PRODUCT DETAIL ============ -->
 <section class="page" id="page-product-detail">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <a href="#" onclick="go('products');return false;">Produk</a><span class="sep">/</span>
-      <span class="current" id="pdBreadcrumbName">Produk</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li><a href="#" onclick="go('products');return false;">Produk</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current" id="pdBreadcrumbName">Produk</li>
+  </ol>
+</nav>
     <div class="pd-grid">
       <div>
         <div class="pd-gallery-main" id="pdMainVisual"></div>
@@ -2283,14 +2273,16 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ ARTICLES ============ -->
 <section class="page" id="page-articles">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <span class="current">Artikel</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current">Artikel</li>
+  </ol>
+</nav>
     <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Cerita Kami</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Artikel &amp; Kegiatan</h1>
-      <p class="section-lead">Kami membagikan cerita pelatihan, edukasi fermentasi, dan aktivitas komunitas di seluruh Lampung.</p>
+      <p class="section-lead">Cerita pelatihan, edukasi fermentasi, dan aktivitas komunitas kami di seluruh Lampung.</p>
     </div>
     <div class="chip-row" id="articleFilters" style="margin-bottom:24px">
       <button class="chip is-active" onclick="filterArticles('all', this)">Semua</button>
@@ -2304,11 +2296,13 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ ARTICLE DETAIL ============ -->
 <section class="page" id="page-article-detail">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <a href="#" onclick="go('articles');return false;">Artikel</a><span class="sep">/</span>
-      <span class="current" id="adBreadcrumbName">Artikel</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li><a href="#" onclick="go('articles');return false;">Artikel</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current" id="adBreadcrumbName">Artikel</li>
+  </ol>
+</nav>
     <div class="content-measure" style="margin:0 auto">
       <div class="article-detail-cover tint-minuman">${ic('leaf','icon-lg')}</div>
       <span class="badge badge-maroon" style="margin-top:20px" id="adCat">Kategori</span>
@@ -2334,10 +2328,12 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ FAQ ============ -->
 <section class="page" id="page-faq">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <span class="current">FAQ</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current">FAQ</li>
+  </ol>
+</nav>
     <div class="section-head text-center" style="max-width:640px; margin-left:auto; margin-right:auto" data-reveal>
       <span class="eyebrow" style="justify-content:center">Bantuan</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Pertanyaan yang Sering Diajukan</h1>
@@ -2364,10 +2360,12 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ CONTACT ============ -->
 <section class="page" id="page-contact">
   <div class="container section">
-    <div class="breadcrumb">
-      <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
-      <span class="current">Kontak</span>
-    </div>
+    <nav class="breadcrumb" aria-label="Navigasi breadcrumb">
+  <ol style="display:flex;gap:6px;list-style:none;margin:0;padding:0;flex-wrap:wrap">
+      <li><a href="#" onclick="go('home');return false;">Beranda</a></li><li aria-hidden="true" class="sep">/</li>
+      <li aria-current="page" class="current">Kontak</li>
+  </ol>
+</nav>
     <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Kontak</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Hubungi Kami</h1>
@@ -2566,21 +2564,16 @@ async function loadLiveData(){
 
   try{
     const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
-    const [prodRes, artRes, faqRes, settingsRes, aboutRes, aboutContentRes] = await Promise.all([
+    const [prodRes, artRes, faqRes, settingsRes, aboutRes] = await Promise.all([
       sb.from('products').select('*').eq('published', true).order('sort_order', { ascending:true }),
       sb.from('articles').select('*').eq('published', true).order('published_at', { ascending:false }),
       sb.from('faq').select('*').order('sort_order', { ascending:true }),
       sb.from('settings').select('*').limit(1).maybeSingle(),
-      sb.from('about_gallery').select('*').eq('published', true).order('sort_order', { ascending:true }),
-      sb.from('about_content').select('*').limit(1).maybeSingle()
+      sb.from('about_gallery').select('*').eq('published', true).order('sort_order', { ascending:true })
     ]);
 
     if (!settingsRes.error && settingsRes.data){
       applySettings(settingsRes.data);
-    }
-
-    if (!aboutContentRes.error && aboutContentRes.data){
-      applyAboutContent(aboutContentRes.data);
     }
 
     if (!prodRes.error && prodRes.data && prodRes.data.length){
@@ -2636,10 +2629,7 @@ function renderApp(){
   renderFaqPreview();
   renderFaqFull();
   renderCertificates();
-  renderAboutContent();
   renderAboutPhotos();
-  renderAboutPageVisual();
-  renderAboutPageGallery();
   router();
 }
 
