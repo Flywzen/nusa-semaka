@@ -218,22 +218,52 @@ select 'PT Nusa Semaka Creativepreneur'
 where not exists (select 1 from public.settings);
 
 -- ============================================================
--- STORAGE — jalankan SETELAH kamu membuat 3 bucket lewat Dashboard:
--- Storage > New bucket > "products" (Public), "articles" (Public), "logos" (Public)
+-- TABLE: about_gallery
+-- Foto slideshow yang tampil di section "Tentang Kami" (beranda).
+-- ============================================================
+create table if not exists public.about_gallery (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  caption text default '',
+  sort_order integer not null default 0,
+  published boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index if not exists about_gallery_sort_idx on public.about_gallery(sort_order);
+
+drop trigger if exists trg_about_gallery_updated on public.about_gallery;
+create trigger trg_about_gallery_updated before update on public.about_gallery
+  for each row execute function public.set_updated_at();
+
+alter table public.about_gallery enable row level security;
+
+drop policy if exists "public read published about_gallery" on public.about_gallery;
+create policy "public read published about_gallery" on public.about_gallery
+  for select using (published = true);
+
+drop policy if exists "admin full access about_gallery" on public.about_gallery;
+create policy "admin full access about_gallery" on public.about_gallery
+  for all using (auth.uid() is not null) with check (auth.uid() is not null);
+
+-- ============================================================
+-- STORAGE — jalankan SETELAH kamu membuat bucket lewat Dashboard:
+-- Storage > New bucket > "products" (Public), "articles" (Public),
+-- "logos" (Public), "about" (Public)
 -- Lalu jalankan bagian di bawah ini supaya admin bisa upload gambar.
 -- ============================================================
 drop policy if exists "public read product images" on storage.objects;
 create policy "public read product images" on storage.objects
-  for select using (bucket_id in ('products','articles','logos'));
+  for select using (bucket_id in ('products','articles','logos','about'));
 
 drop policy if exists "admin upload images" on storage.objects;
 create policy "admin upload images" on storage.objects
-  for insert with check (bucket_id in ('products','articles','logos') and auth.uid() is not null);
+  for insert with check (bucket_id in ('products','articles','logos','about') and auth.uid() is not null);
 
 drop policy if exists "admin update images" on storage.objects;
 create policy "admin update images" on storage.objects
-  for update using (bucket_id in ('products','articles','logos') and auth.uid() is not null);
+  for update using (bucket_id in ('products','articles','logos','about') and auth.uid() is not null);
 
 drop policy if exists "admin delete images" on storage.objects;
 create policy "admin delete images" on storage.objects
-  for delete using (bucket_id in ('products','articles','logos') and auth.uid() is not null);
+  for delete using (bucket_id in ('products','articles','logos','about') and auth.uid() is not null);
