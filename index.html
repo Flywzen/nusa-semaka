@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.onerror=null;document.write('<script src=\'https://unpkg.com/@supabase/supabase-js@2\'><\/script>')"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================
@@ -287,6 +288,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   position:relative; overflow:hidden;
 }
 .about-visual .pattern{ position:absolute; inset:0; opacity:0.5; }
+.about-visual.has-photos .pattern{ display:none; }
 .mission-list{ display:flex; flex-direction:column; gap:14px; margin-top:18px; }
 .mission-item{ display:flex; gap:12px; align-items:flex-start; }
 .mission-icon{ width:32px; height:32px; border-radius:10px; background:var(--gold-tint); color:var(--gold-dark); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
@@ -412,6 +414,89 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .pull-quote{ border-left:3px solid var(--gold); padding:4px 0 4px 20px; margin:28px 0; font-size:1.125rem; font-style:normal; color:var(--maroon-dark); font-weight:600; line-height:1.5; }
 
 /* ============================================
+   LEGALITAS & SERTIFIKASI (certificate carousel)
+   ============================================ */
+.cert-carousel-wrap{ position:relative; margin-top:8px; }
+.cert-track{
+  display:flex; gap:20px; overflow-x:auto; scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:4px 4px 8px;
+  scroll-padding-left:4px;
+}
+.cert-track::-webkit-scrollbar{ display:none; }
+.cert-card{
+  scroll-snap-align:start; flex:0 0 82%; max-width:340px;
+  background:var(--white); border:1px solid var(--border); border-radius:var(--r-card);
+  overflow:hidden; display:flex; flex-direction:column;
+  transition:transform 220ms var(--ease-out), border-color 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  animation:cardIn 360ms var(--ease-out) both;
+}
+.cert-card:hover{ transform:translateY(-4px); border-color:var(--gold); box-shadow:var(--shadow-2); }
+@media(min-width:640px){ .cert-card{ flex-basis:calc(50% - 10px); max-width:none; } }
+@media(min-width:960px){ .cert-card{ flex-basis:calc((100% - 40px)/3); } }
+.cert-thumb{
+  aspect-ratio:3/4; position:relative; background:var(--surface-2); overflow:hidden;
+  border-bottom:1px solid var(--border); width:100%; border:none; padding:0; display:block; cursor:pointer;
+}
+.cert-thumb img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center; transition:transform 500ms var(--ease-out); }
+.cert-card:hover .cert-thumb img{ transform:scale(1.045); }
+.cert-thumb .badge{ position:absolute; top:10px; left:10px; }
+.cert-body{ padding:16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+.cert-org{ font-size:0.75rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-faint); }
+.cert-title{ font-size:1rem; font-weight:800; line-height:1.3; color:var(--text); }
+.cert-desc{
+  font-size:0.8125rem; color:var(--text-muted); line-height:1.55; margin-top:2px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.cert-doc-link{
+  display:inline-flex; align-items:center; gap:6px; font-size:0.8125rem; font-weight:700;
+  color:var(--maroon); margin-top:auto; padding-top:12px;
+}
+
+.cert-nav-btn{
+  display:none; position:absolute; top:38%; transform:translateY(-50%); z-index:2;
+  width:44px; height:44px; border-radius:var(--r-full); background:var(--white);
+  border:1px solid var(--border); box-shadow:var(--shadow-2);
+  align-items:center; justify-content:center; color:var(--text); transition:background 180ms;
+}
+.cert-nav-btn:hover{ background:var(--surface-2); }
+.cert-nav-prev{ left:-14px; }
+.cert-nav-next{ right:-14px; }
+.cert-nav-prev svg{ transform:rotate(180deg); }
+@media(min-width:960px){ .cert-nav-btn{ display:flex; } }
+
+.cert-dots{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:20px; }
+.cert-dot{ width:7px; height:7px; border-radius:99px; background:var(--border-strong); transition:all 220ms var(--ease-out); padding:0; border:none; }
+.cert-dot.is-active{ width:22px; background:var(--gold-dark); }
+
+/* ============================================
+   ABOUT PHOTO SLIDESHOW (fades inside .about-visual)
+   ============================================ */
+.about-photo-track{ position:absolute; inset:0; }
+.about-photo-slide{
+  position:absolute; inset:0; opacity:0; transition:opacity 700ms var(--ease-out);
+  pointer-events:none;
+}
+.about-photo-slide.is-active{ opacity:1; pointer-events:auto; }
+.about-photo-slide img{ width:100%; height:100%; object-fit:cover; }
+.about-photo-caption{
+  position:absolute; left:0; right:0; bottom:0; padding:10px 14px;
+  font-size:0.75rem; color:#fff; background:linear-gradient(to top, rgba(0,0,0,.55), transparent);
+}
+.about-photo-dots{ position:absolute; left:0; right:0; bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px; z-index:2; }
+.about-photo-dots .cert-dot{ background:rgba(255,255,255,.55); }
+.about-photo-dots .cert-dot.is-active{ background:#fff; }
+
+/* Document preview modal (larger variant of the base .modal) */
+.modal--doc{ max-width:760px; padding:0; overflow:hidden; }
+.doc-modal-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:20px 20px 16px; border-bottom:1px solid var(--border); }
+.doc-modal-org{ font-size:0.75rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; color:var(--text-faint); }
+.doc-modal-title{ font-size:1.0625rem; font-weight:800; margin-top:2px; }
+.doc-modal-frame-wrap{ background:var(--surface-2); }
+.doc-modal-frame{ width:100%; height:56vh; max-height:600px; border:none; display:block; }
+.doc-modal-foot{ display:flex; gap:10px; flex-wrap:wrap; padding:16px 20px 20px; }
+.doc-modal-foot .btn{ flex:1; min-width:160px; }
+
+/* ============================================
    FAQ
    ============================================ */
 .faq-list{ border-top:1px solid var(--border); }
@@ -423,9 +508,9 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 }
 .faq-q .chev{ transition:transform 240ms var(--ease-out); color:var(--gold-dark); flex-shrink:0; }
 .faq-item.is-open .faq-q .chev{ transform:rotate(180deg); }
-.faq-a{ max-height:0; overflow:hidden; transition:max-height 280ms var(--ease-out); }
+.faq-a{ height:0; overflow:hidden; }
 .faq-a-inner{ padding:0 4px 20px; font-size:0.9375rem; color:var(--text-muted); line-height:1.65; max-width:680px; }
-.faq-item.is-open .faq-a{ max-height:400px; }
+.faq-item.is-open .faq-a{ height:auto; }
 
 /* ============================================
    CONTACT
@@ -625,6 +710,59 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .hide-mobile{ display:none; }
 @media(min-width:640px){ .hide-mobile{ display:inline-flex; } }
 .text-center{ text-align:center; }
+
+/* ============================================================
+   MOTION — senior motion pass (GSAP-driven JS + supporting CSS)
+   ============================================================ */
+
+/* ---- Navbar scroll transition ---- */
+.header-wrap{ transition:padding-top 320ms var(--ease-out); }
+.header{ transition:background-color 320ms var(--ease-out), box-shadow 320ms var(--ease-out), border-color 320ms var(--ease-out); }
+.header-wrap.is-scrolled{ padding-top:8px; }
+.header-wrap.is-scrolled .header{ background:rgba(250,247,240,0.97); box-shadow:var(--shadow-2); border-color:var(--border-strong); }
+
+/* ---- Hero ambient background movement (decorative, non-interactive) ---- */
+.hero{ position:relative; }
+.hero-ambient{ position:absolute; inset:-15% -8% auto -8%; height:130%; overflow:hidden; z-index:0; pointer-events:none; }
+.hero-grid{ position:relative; z-index:1; }
+.ambient-blob{ position:absolute; border-radius:50%; filter:blur(60px); will-change:transform; }
+.ambient-blob-1{ width:320px; height:320px; background:var(--gold-tint); opacity:0.55; top:-40px; left:-30px; animation:driftA 26s ease-in-out infinite alternate; }
+.ambient-blob-2{ width:280px; height:280px; background:var(--maroon-tint); opacity:0.45; bottom:-60px; right:-20px; animation:driftB 30s ease-in-out infinite alternate; }
+@keyframes driftA{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(36px,26px) scale(1.08); } }
+@keyframes driftB{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(-28px,-32px) scale(1.05); } }
+
+/* ---- Product / article image zoom on card hover (card itself already lifts via existing rules) ---- */
+.card-visual-img, .card-article-visual-img{ transition:transform 500ms var(--ease-out); }
+.card-product:hover .card-visual-img{ transform:scale(1.06); }
+.card-article:hover .card-article-visual-img{ transform:scale(1.06); }
+
+/* ---- Button / link micro interactions ---- */
+.btn:hover{ box-shadow:0 6px 18px rgba(46,40,32,0.12); }
+.btn-whatsapp:hover, .wa-float:hover{ box-shadow:0 6px 18px rgba(37,211,102,0.32); }
+.icon-nudge{ transition:transform 220ms var(--ease-out); }
+.btn:hover .icon-nudge, .card-article-link:hover .icon-nudge{ transform:translateX(3px); }
+
+/* ---- CTA band ambient glow ---- */
+.cta-band{ position:relative; }
+.cta-band::before{
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(circle at 30% 20%, rgba(201,162,39,0.35), transparent 55%),
+             radial-gradient(circle at 75% 80%, rgba(201,162,39,0.20), transparent 55%);
+  animation:ctaGlow 16s ease-in-out infinite alternate;
+}
+.cta-band > *{ position:relative; z-index:1; }
+@keyframes ctaGlow{ from{ opacity:0.7; transform:translate(0,0); } to{ opacity:1; transform:translate(-14px,10px); } }
+
+/* ---- Respect prefers-reduced-motion: neutralize CSS-driven motion everywhere ---- */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .ambient-blob, .cta-band::before{ animation:none !important; opacity:0.25; }
+}
 </style>
 </head>
 <body>
@@ -786,6 +924,34 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   </div>
 </div>
 
+<!-- ============================================
+     CERTIFICATE / DOCUMENT PREVIEW MODAL
+     ============================================ -->
+<div class="modal-overlay" id="certModalOverlay" onclick="if(event.target===this)closeCertModal()">
+  <div class="modal modal--doc" role="dialog" aria-label="Pratinjau dokumen">
+    <div class="doc-modal-head">
+      <div>
+        <div class="doc-modal-org" id="certModalOrg">—</div>
+        <div class="doc-modal-title" id="certModalTitle">—</div>
+        <div class="cert-desc" style="margin-top:4px;-webkit-line-clamp:1">No. <span id="certModalNumber">—</span></div>
+      </div>
+      <button class="modal-close" style="flex-shrink:0" onclick="closeCertModal()" aria-label="Tutup">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="doc-modal-frame-wrap">
+      <iframe class="doc-modal-frame" id="certModalFrame" title="Pratinjau dokumen PDF"></iframe>
+    </div>
+    <div class="doc-modal-foot">
+      <a class="btn btn-primary" id="certModalDownload" href="#" target="_blank" rel="noopener">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Unduh Dokumen
+      </a>
+      <button class="btn btn-secondary" onclick="closeCertModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    DATA
@@ -886,6 +1052,68 @@ let FAQS = [
 ];
 
 /* ============================================================
+   LEGALITAS & SERTIFIKASI
+   Struktur data ini dibuat agar mudah disambungkan ke CMS/Supabase
+   nanti (mis. tabel `certificates`) tanpa perlu mengubah markup:
+   cukup timpa array CERTIFICATES dengan data dari database, lalu
+   panggil ulang renderCertificates().
+   thumb  -> URL gambar pratinjau (halaman pertama dokumen)
+   file   -> URL dokumen PDF asli (dipakai untuk pratinjau + unduh)
+   ============================================================ */
+let CERTIFICATES = [
+  {
+    id:1,
+    category:'NIB',
+    title:'Nomor Induk Berusaha (NIB)',
+    org:'Kementerian Investasi/BKPM RI',
+    number:'0902250027656',
+    desc:'Bukti legalitas resmi PT Nusa Semaka Creativepreneur, terdaftar melalui sistem OSS Republik Indonesia.',
+    thumb:'assets/certificates/thumbs/nib-nusa-semaka.jpg',
+    file:'assets/certificates/nib-nusa-semaka.pdf',
+  },
+  {
+    id:2,
+    category:'Halal',
+    title:'Sertifikat Halal — Kombucha',
+    org:'BPJPH Kementerian Agama RI',
+    number:'18110038620761225ID',
+    desc:'Jaminan kehalalan produk Kombucha Nusa Semaka, diterbitkan resmi oleh Badan Penyelenggara Jaminan Produk Halal.',
+    thumb:'assets/certificates/thumbs/sertifikat-halal.jpg',
+    file:'assets/certificates/sertifikat-halal-kombucha.pdf',
+  },
+  {
+    id:3,
+    category:'PIRT',
+    title:'Sertifikat PIRT — Kombucha FE',
+    org:'DPMPTSP Kab. Lampung Selatan',
+    number:'P-IRT 1091801020868-30',
+    desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Kombucha FE, berlaku hingga 30 Oktober 2030.',
+    thumb:'assets/certificates/thumbs/pirt-kombucha-fe.jpg',
+    file:'assets/certificates/sertifikat-pirt-kombucha-fe.pdf',
+  },
+  {
+    id:4,
+    category:'PIRT',
+    title:'Sertifikat PIRT — Fruit Enzyme',
+    org:'DPMPTSP Kab. Lampung Selatan',
+    number:'P-IRT 1091801040868-30',
+    desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Fruit Enzyme, berlaku hingga 31 Oktober 2030.',
+    thumb:'assets/certificates/thumbs/pirt-fruit-enzyme.jpg',
+    file:'assets/certificates/sertifikat-pirt-fruit-enzyme.pdf',
+  },
+  {
+    id:5,
+    category:'Merek',
+    title:'Sertifikat Merek Terdaftar',
+    org:'Kemenkumham RI — Ditjen KI',
+    number:'IDM001364965',
+    desc:'Hak merek resmi atas nama Nusa Semaka Creativepreneur, dilindungi hukum hingga 22 Januari 2035.',
+    thumb:'assets/certificates/thumbs/sertifikat-merek.jpg',
+    file:'assets/certificates/sertifikat-merek-nusa-semaka.pdf',
+  },
+];
+
+/* ============================================================
    ICONS
    ============================================================ */
 function sig(cls){
@@ -914,8 +1142,10 @@ function ic(name, cls){
     calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
     shield:'<path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/>',
     box:'<path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
+    download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
   };
-  return `<svg class="${cls||'icon'}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${map[name]||''}</svg>`;
+  const extra = name==='arrowRight' ? ' icon-nudge' : '';
+  return `<svg class="${(cls||'icon')+extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${map[name]||''}</svg>`;
 }
 
 function money(n){
@@ -945,7 +1175,7 @@ let SETTINGS = {
   email: 'nusa.semaka@gmail.com',
   phone: '0811-1011-6812',
   whatsapp: WA_NUMBER,
-  business_hours: 'Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB',
+  business_hours: 'Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB',
   google_maps: '',
   instagram: 'https://instagram.com/nusasemakaofficial',
   facebook: '',
@@ -981,7 +1211,7 @@ function syncWaLinks(){
 
 /* ============================================================
    APPLY SETTINGS ke seluruh elemen di halaman (header, footer,
-   halaman Kontak) Ã¢â‚¬â€ dipanggil setelah data settings dari
+   halaman Kontak) â€” dipanggil setelah data settings dari
    Supabase berhasil dimuat.
    ============================================================ */
 function applySettings(s){
@@ -1295,11 +1525,220 @@ function renderFaqPreview(){
 function toggleFaq(btn){
   const item = btn.closest('.faq-item');
   const container = item.closest('.faq-list');
+  const willOpen = !item.classList.contains('is-open');
+
   container.querySelectorAll('.faq-item').forEach(el=>{
-    if(el!==item) el.classList.remove('is-open');
+    if(el!==item && el.classList.contains('is-open')){
+      el.classList.remove('is-open');
+      animateFaqPanel(el, false);
+    }
   });
-  item.classList.toggle('is-open');
+
+  item.classList.toggle('is-open', willOpen);
+  animateFaqPanel(item, willOpen);
 }
+
+function animateFaqPanel(item, open){
+  const panel = item.querySelector('.faq-a');
+  if(!panel || !GSAP_OK || REDUCE_MOTION) return; // CSS height:0/auto already reflects the class toggle
+  gsap.killTweensOf(panel);
+  if(open){
+    gsap.set(panel, { height:'auto' });
+    const full = panel.offsetHeight;
+    gsap.fromTo(panel, { height:0 }, { height:full, duration:0.42, ease:'power2.out',
+      onComplete:()=>{ panel.style.height = 'auto'; } });
+  } else {
+    const full = panel.offsetHeight;
+    gsap.fromTo(panel, { height:full }, { height:0, duration:0.32, ease:'power2.inOut' });
+  }
+}
+
+/* ============================================================
+   RENDER: LEGALITAS & SERTIFIKASI (certificate carousel)
+   ============================================================ */
+function certBadgeClass(cat){
+  if(cat==='Halal') return 'badge-green';
+  if(cat==='Merek') return 'badge-maroon';
+  return 'badge-gold'; // NIB, PIRT
+}
+function certCard(c){
+  return `
+  <div class="cert-card" data-cert-id="${c.id}">
+    <button class="cert-thumb" onclick="openCertModal(${c.id})" aria-label="Lihat ${c.title}">
+      <span class="badge ${certBadgeClass(c.category)}">${c.category}</span>
+      <img src="${c.thumb}" alt="Pratinjau ${c.title}" loading="lazy">
+    </button>
+    <div class="cert-body">
+      <span class="cert-org">${c.org}</span>
+      <h3 class="cert-title">${c.title}</h3>
+      <p class="cert-desc">${c.desc}</p>
+      <a class="cert-doc-link" href="#" onclick="openCertModal(${c.id});return false;">Lihat Dokumen ${ic('arrowRight','icon-sm')}</a>
+    </div>
+  </div>`;
+}
+function renderCertificates(){
+  const track = document.getElementById('certTrack');
+  if(!track) return;
+  track.innerHTML = CERTIFICATES.map(certCard).join('');
+  const dots = document.getElementById('certDots');
+  if(dots){
+    dots.innerHTML = CERTIFICATES.map((c,i)=>`<button class="cert-dot ${i===0?'is-active':''}" onclick="certGoTo(${i})" aria-label="Ke sertifikat ${i+1}"></button>`).join('');
+  }
+  initCertCarousel();
+}
+
+/* ---- Carousel engine: autoplay every 6s, pauses on hover/touch/drag ---- */
+const certState = { index:0, autoTimer:null, resumeTimer:null, programmatic:false, scrollSettleTimer:null };
+
+function certStepWidth(){
+  const track = document.getElementById('certTrack');
+  if(!track) return 0;
+  const card = track.querySelector('.cert-card');
+  if(!card) return 0;
+  const gap = parseFloat(getComputedStyle(track).gap) || 0;
+  return card.getBoundingClientRect().width + gap;
+}
+
+function certGoTo(i){
+  const track = document.getElementById('certTrack');
+  if(!track) return;
+  const max = CERTIFICATES.length - 1;
+  certState.index = Math.max(0, Math.min(max, i));
+  certState.programmatic = true;
+  track.scrollTo({ left: certState.index * certStepWidth(), behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
+  certUpdateDots();
+  setTimeout(()=>{ certState.programmatic = false; }, 500);
+}
+
+function certUpdateDots(){
+  document.querySelectorAll('.cert-dot').forEach((d,i)=> d.classList.toggle('is-active', i===certState.index));
+}
+
+function certNav(delta){
+  certPause();
+  const max = CERTIFICATES.length - 1;
+  let next = certState.index + delta;
+  if(next > max) next = 0;
+  if(next < 0) next = max;
+  certGoTo(next);
+  certScheduleResume();
+}
+
+function certAutoAdvance(){
+  const max = CERTIFICATES.length - 1;
+  certGoTo(certState.index >= max ? 0 : certState.index + 1);
+}
+
+function certPause(){
+  clearInterval(certState.autoTimer);
+  certState.autoTimer = null;
+  clearTimeout(certState.resumeTimer);
+}
+function certScheduleResume(delay){
+  clearTimeout(certState.resumeTimer);
+  certState.resumeTimer = setTimeout(certPlay, delay || 4000);
+}
+function certPlay(){
+  certPause();
+  certState.autoTimer = setInterval(certAutoAdvance, 6000);
+}
+
+function initCertCarousel(){
+  const wrap = document.querySelector('.cert-carousel-wrap');
+  const track = document.getElementById('certTrack');
+  if(!wrap || !track || track.dataset.certInit) { if(track) certPlay(); return; }
+  track.dataset.certInit = '1';
+
+  wrap.addEventListener('mouseenter', certPause);
+  wrap.addEventListener('mouseleave', ()=>certScheduleResume(2500));
+  track.addEventListener('touchstart', certPause, { passive:true });
+  track.addEventListener('touchend', ()=>certScheduleResume(4000), { passive:true });
+
+  track.addEventListener('scroll', ()=>{
+    if(!certState.programmatic) certPause(); // user is dragging/scrolling manually
+    clearTimeout(certState.scrollSettleTimer);
+    certState.scrollSettleTimer = setTimeout(()=>{
+      const step = certStepWidth();
+      if(step > 0) certState.index = Math.round(track.scrollLeft / step);
+      certUpdateDots();
+      if(!certState.programmatic) certScheduleResume(4000);
+    }, 120);
+  }, { passive:true });
+
+  window.addEventListener('resize', ()=> certGoTo(certState.index));
+
+  certPlay();
+}
+
+/* ============================================================
+   ABOUT PHOTO SLIDESHOW
+   Foto ini idealnya dikelola dari panel admin (tabel `about_gallery`
+   di Supabase, lihat loadLiveData()). Kalau belum ada foto sama
+   sekali, kotak "Tentang Kami" tetap tampil dengan ikon seperti biasa.
+   ============================================================ */
+let ABOUT_PHOTOS = [];
+const aboutPhotoState = { index:0, autoTimer:null };
+
+function renderAboutPhotos(){
+  const track = document.getElementById('aboutPhotoTrack');
+  const dots = document.getElementById('aboutPhotoDots');
+  const visual = document.getElementById('aboutVisual');
+  if (!track || !visual) return;
+  clearInterval(aboutPhotoState.autoTimer);
+  if (!ABOUT_PHOTOS.length){
+    visual.classList.remove('has-photos');
+    track.innerHTML = '';
+    if (dots) dots.innerHTML = '';
+    return;
+  }
+  visual.classList.add('has-photos');
+  aboutPhotoState.index = 0;
+  track.innerHTML = ABOUT_PHOTOS.map((p,i)=>`
+    <div class="about-photo-slide ${i===0?'is-active':''}">
+      <img src="${p.image_url}" alt="${(p.caption||'Foto Nusa Semaka')}" loading="lazy">
+      ${p.caption ? `<div class="about-photo-caption">${p.caption}</div>` : ''}
+    </div>`).join('');
+  if (dots){
+    dots.innerHTML = ABOUT_PHOTOS.length > 1
+      ? ABOUT_PHOTOS.map((p,i)=>`<button class="cert-dot ${i===0?'is-active':''}" onclick="aboutPhotoGoTo(${i})" aria-label="Ke foto ${i+1}"></button>`).join('')
+      : '';
+  }
+  if (ABOUT_PHOTOS.length > 1) aboutPhotoPlay();
+}
+function aboutPhotoGoTo(i){
+  if (!ABOUT_PHOTOS.length) return;
+  aboutPhotoState.index = ((i % ABOUT_PHOTOS.length) + ABOUT_PHOTOS.length) % ABOUT_PHOTOS.length;
+  document.querySelectorAll('#aboutPhotoTrack .about-photo-slide').forEach((el,i2)=> el.classList.toggle('is-active', i2===aboutPhotoState.index));
+  document.querySelectorAll('#aboutPhotoDots .cert-dot').forEach((d,i2)=> d.classList.toggle('is-active', i2===aboutPhotoState.index));
+}
+function aboutPhotoAdvance(){ aboutPhotoGoTo(aboutPhotoState.index + 1); }
+function aboutPhotoPlay(){
+  clearInterval(aboutPhotoState.autoTimer);
+  aboutPhotoState.autoTimer = setInterval(aboutPhotoAdvance, 4500);
+}
+
+/* ---- Document preview modal ---- */
+function openCertModal(id){
+  const c = CERTIFICATES.find(x=>x.id===id);
+  if(!c) return;
+  certPause();
+  document.getElementById('certModalOrg').textContent = c.org;
+  document.getElementById('certModalTitle').textContent = c.title;
+  document.getElementById('certModalNumber').textContent = c.number;
+  document.getElementById('certModalFrame').src = c.file;
+  const dl = document.getElementById('certModalDownload');
+  dl.href = c.file;
+  dl.setAttribute('download', c.file.split('/').pop());
+  document.getElementById('certModalOverlay').classList.add('is-open');
+}
+function closeCertModal(){
+  document.getElementById('certModalOverlay').classList.remove('is-open');
+  setTimeout(()=>{ document.getElementById('certModalFrame').src = ''; }, 240);
+  certScheduleResume(1500);
+}
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && document.getElementById('certModalOverlay').classList.contains('is-open')) closeCertModal();
+});
 
 /* ============================================================
    CART LOGIC
@@ -1465,6 +1904,10 @@ document.getElementById('pageRoot').innerHTML = `
 <!-- ============ HOME ============ -->
 <section class="page active" id="page-home">
   <div class="container hero">
+    <div class="hero-ambient" aria-hidden="true">
+      <span class="ambient-blob ambient-blob-1"></span>
+      <span class="ambient-blob ambient-blob-2"></span>
+    </div>
     <div class="hero-grid">
       <div>
         <span class="eyebrow">Nusa Semaka Creativepreneur &middot; Bandar Lampung</span>
@@ -1496,11 +1939,13 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section" id="aboutPreview">
-    <div class="about-grid">
-      <div class="about-visual tint-rumah">
-        ${ic('users','icon-lg')}
+    <div class="about-grid" data-reveal-group>
+      <div class="about-visual tint-rumah" data-reveal-item id="aboutVisual">
+        <div class="pattern">${ic('users','icon-lg')}</div>
+        <div class="about-photo-track" id="aboutPhotoTrack"></div>
+        <div class="about-photo-dots" id="aboutPhotoDots"></div>
       </div>
-      <div>
+      <div data-reveal-item>
         <span class="eyebrow">Tentang Kami</span>
         <h2 class="section-title" style="margin-top:10px">Lebih dari sekadar produk. Ini tentang memberdayakan.</h2>
         <p class="section-lead">Nusa Semaka Creativepreneur lahir dari Bandar Lampung dengan satu misi: membantu masyarakat memahami dan memanfaatkan fermentasi alami untuk kehidupan yang lebih sehat dan berkelanjutan.</p>
@@ -1512,7 +1957,21 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section section--tight">
-    <div class="section-head section-head-row">
+    <div class="section-head text-center" data-reveal>
+      <span class="eyebrow" style="justify-content:center">Kepercayaan Anda, Prioritas Kami</span>
+      <h2 class="section-title" style="margin-top:10px">Legalitas &amp; Sertifikasi</h2>
+      <p class="section-lead" style="max-width:560px; margin:10px auto 0">Nusa Semaka beroperasi dengan legalitas resmi dan telah melalui proses sertifikasi oleh lembaga berwenang di Indonesia.</p>
+    </div>
+    <div class="cert-carousel-wrap">
+      <button class="cert-nav-btn cert-nav-prev" onclick="certNav(-1)" aria-label="Sertifikat sebelumnya">${ic('arrowRight','icon-sm')}</button>
+      <div class="cert-track" id="certTrack"></div>
+      <button class="cert-nav-btn cert-nav-next" onclick="certNav(1)" aria-label="Sertifikat berikutnya">${ic('arrowRight','icon-sm')}</button>
+    </div>
+    <div class="cert-dots" id="certDots"></div>
+  </div>
+
+  <div class="container section section--tight">
+    <div class="section-head section-head-row" data-reveal>
       <div>
         <span class="eyebrow">Rekomendasi</span>
         <h2 class="section-title" style="margin-top:10px">Produk Pilihan</h2>
@@ -1523,7 +1982,7 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section section--tight section--surface" style="border-radius:32px">
-    <div class="section-head section-head-row">
+    <div class="section-head section-head-row" data-reveal>
       <div>
         <span class="eyebrow">Cerita &amp; Edukasi</span>
         <h2 class="section-title" style="margin-top:10px">Artikel Terbaru</h2>
@@ -1534,7 +1993,7 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section section--tight">
-    <div class="section-head" style="text-align:center">
+    <div class="section-head" style="text-align:center" data-reveal>
       <span class="eyebrow" style="justify-content:center">Pertanyaan Umum</span>
       <h2 class="section-title" style="margin-top:10px">Sering Ditanyakan</h2>
     </div>
@@ -1547,7 +2006,7 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section">
-    <div class="cta-band">
+    <div class="cta-band" data-reveal>
       <h2>Punya pertanyaan atau ingin memesan produk kami?</h2>
       <p>Tim kami siap membantu Anda langsung melalui WhatsApp.</p>
       <a class="btn btn-primary" id="ctaWaBtn" target="_blank" rel="noopener">${ic('phone','icon-sm')} Chat Sekarang</a>
@@ -1562,20 +2021,20 @@ document.getElementById('pageRoot').innerHTML = `
       <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
       <span class="current">Tentang Kami</span>
     </div>
-    <div class="section-head" style="max-width:640px">
+    <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Tentang Kami</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">PT Nusa Semaka Creativepreneur</h1>
       <p class="section-lead">Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.</p>
     </div>
 
-    <div class="about-grid">
-      <div>
+    <div class="about-grid" data-reveal-group>
+      <div data-reveal-item>
         <div class="about-visual tint-minuman" style="margin-bottom:8px">
           ${ic('leaf','icon-lg')}
         </div>
         <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
-      <div>
+      <div data-reveal-item>
         <h3 style="font-size:1.25rem; font-weight:800">Misi Kami</h3>
         <div class="mission-list">
           <div class="mission-item"><span class="mission-icon">${ic('graduation','icon-sm')}</span><span class="mission-text">Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.</span></div>
@@ -1588,22 +2047,22 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section section--tight section--surface" style="border-radius:32px">
-    <div class="section-head text-center">
+    <div class="section-head text-center" data-reveal>
       <span class="eyebrow" style="justify-content:center">Apa yang Kami Lakukan</span>
       <h2 class="section-title" style="margin-top:10px">Tiga Pilar Nusa Semaka</h2>
     </div>
-    <div class="pillar-grid">
-      <div class="pillar-card">
+    <div class="pillar-grid" data-reveal-group>
+      <div class="pillar-card" data-reveal-item>
         <div class="pillar-icon tint-minuman">${ic('graduation','icon-lg')}</div>
         <div class="pillar-title">Pelatihan &amp; Edukasi</div>
         <div class="pillar-desc">Pelatihan eco-enzyme, fruit enzyme, dan fermentasi untuk kader PKK, sekolah, dan instansi di seluruh Lampung.</div>
       </div>
-      <div class="pillar-card">
+      <div class="pillar-card" data-reveal-item>
         <div class="pillar-icon tint-rumah">${ic('droplet','icon-lg')}</div>
         <div class="pillar-title">Produk Fermentasi Alami</div>
         <div class="pillar-desc">Kombucha, eco-enzyme, dan produk perawatan berbahan alami hasil fermentasi tradisional.</div>
       </div>
-      <div class="pillar-card">
+      <div class="pillar-card" data-reveal-item>
         <div class="pillar-icon tint-perawatan">${ic('users','icon-lg')}</div>
         <div class="pillar-title">Pemberdayaan Komunitas</div>
         <div class="pillar-desc">Membuka peluang usaha dan ekonomi kreatif bagi masyarakat melalui pendampingan berkelanjutan.</div>
@@ -1612,24 +2071,24 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <span class="eyebrow">Perjalanan Kami</span>
       <h2 class="section-title" style="margin-top:10px">Beberapa Momen Nusa Semaka</h2>
     </div>
-    <div class="content-measure timeline">
-      <div class="timeline-item">
+    <div class="content-measure timeline" data-reveal-group>
+      <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
         <div><div class="timeline-title">Membangun komunitas di Bandar Lampung</div><div class="timeline-desc">Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.</div></div>
       </div>
-      <div class="timeline-item">
+      <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
         <div><div class="timeline-title">Pelatihan Eco-Enzyme &amp; Fruit Enzyme se-Provinsi Lampung</div><div class="timeline-desc">Menjadi fasilitator pelatihan bagi kader PKK dari berbagai kabupaten/kota di Lampung.</div></div>
       </div>
-      <div class="timeline-item">
+      <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
         <div><div class="timeline-title">Berpartisipasi di Pasar Tematik Kota Metro</div><div class="timeline-desc">Memperkenalkan produk fermentasi alami langsung kepada masyarakat.</div></div>
       </div>
-      <div class="timeline-item">
+      <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
         <div><div class="timeline-title">Terus tumbuh bersama komunitas</div><div class="timeline-desc">Melanjutkan misi pemberdayaan dan produk alami ke lebih banyak wilayah di Lampung.</div></div>
       </div>
@@ -1637,7 +2096,7 @@ document.getElementById('pageRoot').innerHTML = `
   </div>
 
   <div class="container section">
-    <div class="cta-band">
+    <div class="cta-band" data-reveal>
       <h2>Ingin berkolaborasi atau mengundang pelatihan kami?</h2>
       <p>Hubungi kami untuk diskusi lebih lanjut.</p>
       <a class="btn btn-primary" id="aboutCtaWaBtn" target="_blank" rel="noopener">${ic('phone','icon-sm')} Chat Sekarang</a>
@@ -1652,7 +2111,7 @@ document.getElementById('pageRoot').innerHTML = `
       <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
       <span class="current">Produk</span>
     </div>
-    <div class="section-head" style="max-width:640px">
+    <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Katalog</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Produk Kami</h1>
       <p class="section-lead">Produk fermentasi alami dari eco-enzyme dan kombucha, dibuat dengan proses tradisional yang ramah lingkungan.</p>
@@ -1705,7 +2164,7 @@ document.getElementById('pageRoot').innerHTML = `
     </div>
 
     <div style="margin-top:64px">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">Produk Lainnya</span>
         <h2 class="section-title" style="margin-top:10px; font-size:1.5rem">Mungkin Anda Juga Suka</h2>
       </div>
@@ -1721,7 +2180,7 @@ document.getElementById('pageRoot').innerHTML = `
       <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
       <span class="current">Artikel</span>
     </div>
-    <div class="section-head" style="max-width:640px">
+    <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Cerita Kami</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Artikel &amp; Kegiatan</h1>
       <p class="section-lead">Cerita pelatihan, edukasi fermentasi, dan aktivitas komunitas kami di seluruh Lampung.</p>
@@ -1756,7 +2215,7 @@ document.getElementById('pageRoot').innerHTML = `
     </div>
 
     <div style="margin-top:56px">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <span class="eyebrow">Baca Juga</span>
         <h2 class="section-title" style="margin-top:10px; font-size:1.5rem">Artikel Terkait</h2>
       </div>
@@ -1772,7 +2231,7 @@ document.getElementById('pageRoot').innerHTML = `
       <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
       <span class="current">FAQ</span>
     </div>
-    <div class="section-head text-center" style="max-width:640px; margin-left:auto; margin-right:auto">
+    <div class="section-head text-center" style="max-width:640px; margin-left:auto; margin-right:auto" data-reveal>
       <span class="eyebrow" style="justify-content:center">Bantuan</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Pertanyaan yang Sering Diajukan</h1>
       <p class="section-lead">Belum menemukan jawaban yang Anda cari? Hubungi kami langsung via WhatsApp.</p>
@@ -1802,18 +2261,18 @@ document.getElementById('pageRoot').innerHTML = `
       <a href="#" onclick="go('home');return false;">Beranda</a><span class="sep">/</span>
       <span class="current">Kontak</span>
     </div>
-    <div class="section-head" style="max-width:640px">
+    <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Kontak</span>
       <h1 class="section-title" style="margin-top:10px; font-size:2rem">Hubungi Kami</h1>
       <p class="section-lead">Ada pertanyaan tentang produk atau ingin mengundang pelatihan kami? Kami siap membantu.</p>
     </div>
     <div class="contact-grid">
-      <div>
-        <div class="contact-card">
+      <div data-reveal-group>
+        <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('mapPin','icon-sm')}</span>
           <div><div class="contact-card-title">Alamat</div><div class="contact-card-desc" id="contactAddressText">Jl. Raflesia 1 Gg. Swadaya 2 No. 109, Tanjung Senang, Bandar Lampung, Lampung</div></div>
         </div>
-        <div class="contact-card">
+        <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('phone','icon-sm')}</span>
           <div>
             <div class="contact-card-title">WhatsApp</div>
@@ -1821,15 +2280,15 @@ document.getElementById('pageRoot').innerHTML = `
             <a class="btn btn-whatsapp btn-sm" id="contactWaBtn" target="_blank" rel="noopener" style="margin-top:10px">Chat Sekarang</a>
           </div>
         </div>
-        <div class="contact-card">
+        <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('mail','icon-sm')}</span>
           <div><div class="contact-card-title">Email</div><div class="contact-card-desc" id="contactEmailText">nusa.semaka@gmail.com</div></div>
         </div>
-        <div class="contact-card">
+        <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('clock','icon-sm')}</span>
-          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB</div></div>
+          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB</div></div>
         </div>
-        <div class="contact-card" style="border:none; padding-left:0; background:transparent">
+        <div class="contact-card" style="border:none; padding-left:0; background:transparent" data-reveal-item>
           <div>
             <div class="contact-card-title" style="margin-bottom:8px">Ikuti Kami</div>
             <div class="contact-social">
@@ -1846,7 +2305,7 @@ document.getElementById('pageRoot').innerHTML = `
           </div>
         </div>
       </div>
-      <div>
+      <div data-reveal>
         <div class="map-frame">
           <iframe id="contactMapFrame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d969.8122007116646!2d105.28327996610176!3d-5.3633432741577804!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e40c5d6ed09ce5d%3A0xcad92e1e0faff47a!2sCp%20group!5e1!3m2!1sen!2sid!4v1785888898370!5m2!1sen!2sid" referrerpolicy="no-referrer-when-downgrade" title="Lokasi Nusa Semaka Creativepreneur"></iframe>
         </div>
@@ -1857,11 +2316,134 @@ document.getElementById('pageRoot').innerHTML = `
 `;
 
 /* ============================================================
-   LIVE DATA (Supabase) Ã¢â‚¬â€ opsional.
+   MOTION SYSTEM (GSAP) â€” senior motion pass
+   Hero entrance, idle float, navbar transition, scroll reveals.
+   Everything here degrades gracefully if GSAP fails to load, and
+   is neutralized under prefers-reduced-motion.
+   ============================================================ */
+const GSAP_OK = typeof window.gsap !== 'undefined';
+const REDUCE_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+/* ---- 1. Hero entrance timeline ---- */
+function initHeroIntro(){
+  const hero = document.querySelector('.hero');
+  if(!hero || !GSAP_OK || REDUCE_MOTION) return;
+
+  const eyebrow = hero.querySelector('.eyebrow');
+  const title   = hero.querySelector('.hero-title');
+  const desc    = hero.querySelector('.hero-desc');
+  const actions = hero.querySelectorAll('.hero-actions > *');
+  const stats   = hero.querySelectorAll('.hero-stats > *');
+  const rings   = hero.querySelectorAll('.hero-emblem-wrap > svg circle');
+  const img     = hero.querySelector('.hero-emblem-img');
+  const chips   = hero.querySelectorAll('.hero-float-chip');
+
+  gsap.set([eyebrow, title, desc], { opacity:0, y:22 });
+  gsap.set(actions, { opacity:0, y:16 });
+  gsap.set(stats, { opacity:0, y:16 });
+  gsap.set(rings, { opacity:0, scale:0.85, transformOrigin:'50% 50%' });
+  gsap.set(img, { opacity:0, scale:0.92, rotate:-3, transformOrigin:'50% 50%' });
+  gsap.set(chips, { opacity:0, y:14, scale:0.9 });
+
+  const cp = 'opacity,transform';
+  const tl = gsap.timeline({ defaults:{ ease:'power3.out' }, onComplete:startHeroFloat });
+
+  tl.to(eyebrow, { opacity:1, y:0, duration:0.5, clearProps:cp })
+    .to(title,   { opacity:1, y:0, duration:0.7, clearProps:cp }, '-=0.3')
+    .to(desc,    { opacity:1, y:0, duration:0.6, clearProps:cp }, '-=0.4')
+    .to(actions, { opacity:1, y:0, duration:0.5, stagger:0.09, clearProps:cp }, '-=0.35')
+    .to(stats,   { opacity:1, y:0, duration:0.5, stagger:0.08, clearProps:cp }, '-=0.3')
+    .to(rings,   { opacity:1, scale:1, duration:0.8, stagger:0.08, ease:'power2.out', clearProps:cp }, '-=0.55')
+    .to(img,     { opacity:1, scale:1, rotate:0, duration:0.8, ease:'back.out(1.5)', clearProps:cp }, '-=0.6')
+    .to(chips,   { opacity:1, y:0, scale:1, duration:0.5, stagger:0.12, ease:'back.out(2)', clearProps:cp }, '-=0.4');
+}
+
+/* ---- 8. Floating hero image (idle loop, starts once entrance finishes) ---- */
+function startHeroFloat(){
+  if(!GSAP_OK || REDUCE_MOTION) return;
+  const img = document.querySelector('.hero-emblem-img');
+  const chips = document.querySelectorAll('.hero-float-chip');
+  if(img) gsap.to(img, { y:-10, duration:3.2, ease:'sine.inOut', yoyo:true, repeat:-1 });
+  chips.forEach((chip, i)=>{
+    gsap.to(chip, {
+      y: i % 2 === 0 ? -8 : 8,
+      duration: 2.6 + i * 0.4,
+      ease:'sine.inOut', yoyo:true, repeat:-1, delay:i * 0.3
+    });
+  });
+}
+
+/* ---- 3. Navbar scroll transition (pure CSS transition, JS just toggles a class) ---- */
+function initNavbarScroll(){
+  const wrap = document.querySelector('.header-wrap');
+  if(!wrap) return;
+  let ticking = false;
+  function update(){
+    wrap.classList.toggle('is-scrolled', window.scrollY > 8);
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive:true });
+  update();
+}
+
+/* ---- 2. Scroll reveal (IntersectionObserver detects entry, GSAP handles the tween) ----
+   IntersectionObserver is used instead of ScrollTrigger because this app toggles whole
+   "pages" via display:none/block rather than real navigation â€” IO naturally re-checks
+   elements once they become visible again, with no manual refresh() bookkeeping needed. */
+function initScrollReveals(){
+  if(!('IntersectionObserver' in window)) return; // elements are visible by default, nothing to fix
+
+  function revealEl(el, delay){
+    if(!GSAP_OK || REDUCE_MOTION) return; // was never hidden in this branch, nothing to do
+    gsap.to(el, { opacity:1, y:0, duration:0.75, ease:'power3.out', delay: delay||0, clearProps:'opacity,transform' });
+  }
+
+  const singles = document.querySelectorAll('[data-reveal]');
+  if(GSAP_OK && !REDUCE_MOTION) gsap.set(singles, { opacity:0, y:28 });
+  const io = new IntersectionObserver((entries, obs)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      revealEl(entry.target);
+      obs.unobserve(entry.target);
+    });
+  }, { threshold:0.15, rootMargin:'0px 0px -8% 0px' });
+  singles.forEach(el=>io.observe(el));
+
+  document.querySelectorAll('[data-reveal-group]').forEach(group=>{
+    const items = group.querySelectorAll(':scope > [data-reveal-item]');
+    if(!items.length) return;
+    if(GSAP_OK && !REDUCE_MOTION) gsap.set(items, { opacity:0, y:28 });
+    const gio = new IntersectionObserver((entries, obs)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        items.forEach((item,i)=> revealEl(item, i*0.1));
+        obs.unobserve(entry.target);
+      });
+    }, { threshold:0.1, rootMargin:'0px 0px -8% 0px' });
+    gio.observe(group);
+  });
+}
+
+/* Keep an already-open FAQ panel's height correct if the viewport is resized */
+window.addEventListener('resize', ()=>{
+  if(!GSAP_OK) return;
+  document.querySelectorAll('.faq-item.is-open .faq-a').forEach(panel=>{
+    gsap.set(panel, { height:'auto' });
+  });
+});
+
+initHeroIntro();
+initScrollReveals();
+initNavbarScroll();
+
+/* ============================================================
+   LIVE DATA (Supabase) â€” opsional.
    Kalau config.js sudah diisi & Supabase bisa diakses, data di atas
    (PRODUCTS/ARTICLES/FAQS) akan ditimpa dengan data terbaru dari
    database. Kalau belum dikonfigurasi atau gagal diakses, situs
-   tetap jalan normal pakai data statis di atas Ã¢â‚¬â€ tidak pernah kosong.
+   tetap jalan normal pakai data statis di atas â€” tidak pernah kosong.
    ============================================================ */
 function withTimeout(promise, ms){
   return Promise.race([
@@ -1877,11 +2459,12 @@ async function loadLiveData(){
 
   try{
     const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
-    const [prodRes, artRes, faqRes, settingsRes] = await Promise.all([
+    const [prodRes, artRes, faqRes, settingsRes, aboutRes] = await Promise.all([
       sb.from('products').select('*').eq('published', true).order('sort_order', { ascending:true }),
       sb.from('articles').select('*').eq('published', true).order('published_at', { ascending:false }),
       sb.from('faq').select('*').order('sort_order', { ascending:true }),
-      sb.from('settings').select('*').limit(1).maybeSingle()
+      sb.from('settings').select('*').limit(1).maybeSingle(),
+      sb.from('about_gallery').select('*').eq('published', true).order('sort_order', { ascending:true })
     ]);
 
     if (!settingsRes.error && settingsRes.data){
@@ -1919,6 +2502,10 @@ async function loadLiveData(){
     if (!faqRes.error && faqRes.data && faqRes.data.length){
       FAQS = faqRes.data.map(f => ({ q: f.question, a: f.answer }));
     }
+
+    if (!aboutRes.error && aboutRes.data){
+      ABOUT_PHOTOS = aboutRes.data.map(p => ({ image_url: p.image_url, caption: p.caption || '' }));
+    }
   } catch(err){
     console.warn('Gagal memuat data live dari Supabase, memakai data cadangan:', err);
   }
@@ -1936,6 +2523,8 @@ function renderApp(){
   renderArticleGrid();
   renderFaqPreview();
   renderFaqFull();
+  renderCertificates();
+  renderAboutPhotos();
   router();
 }
 
