@@ -1243,6 +1243,24 @@ function renderAboutContent(){
   }
 }
 
+/* Kotak foto di sebelah "Visi & Misi Kami" (halaman Tentang) ini SENGAJA
+   memakai foto PERTAMA dari galeri yang sama (tabel `about_gallery`, lihat
+   ABOUT_PHOTOS) supaya bisa dikelola dari admin, menu "Galeri Tentang Kami".
+   Kalau galeri masih kosong, kotak ini tetap tampil dengan ikon + teks
+   bawaan seperti semula. */
+function renderAboutPageVisual(){
+  const box = document.getElementById('aboutPageVisual');
+  const caption = document.getElementById('aboutPageVisualCaption');
+  if (!box) return;
+  if (!ABOUT_PHOTOS.length) return; // biarkan ikon & teks bawaan
+  const photo = ABOUT_PHOTOS[0];
+  box.innerHTML = `<img src="${photo.image_url}" alt="${photo.caption||'Foto Nusa Semaka'}" style="width:100%;height:100%;object-fit:cover" loading="lazy">`;
+  if (caption){
+    if (photo.caption){ caption.textContent = photo.caption; caption.style.display = ''; }
+    else { caption.style.display = 'none'; }
+  }
+}
+
 /* Galeri di halaman "Tentang Kami" ini SENGAJA memakai data yang sama
    dengan galeri slideshow di beranda (tabel `about_gallery`, lihat
    ABOUT_PHOTOS) supaya admin cukup kelola foto di satu tempat saja. */
@@ -2110,10 +2128,10 @@ document.getElementById('pageRoot').innerHTML = `
 
     <div class="about-grid" data-reveal-group>
       <div data-reveal-item>
-        <div class="about-visual tint-minuman" style="margin-bottom:8px">
+        <div class="about-visual tint-minuman" id="aboutPageVisual" style="margin-bottom:8px">
           ${ic('leaf','icon-lg')}
         </div>
-        <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
+        <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center" id="aboutPageVisualCaption">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
       <div data-reveal-item>
         <h3 style="font-size:1.25rem; font-weight:800">Visi &amp; Misi Kami</h3>
@@ -2620,6 +2638,7 @@ function renderApp(){
   renderCertificates();
   renderAboutContent();
   renderAboutPhotos();
+  renderAboutPageVisual();
   renderAboutPageGallery();
   router();
 }
