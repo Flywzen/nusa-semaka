@@ -1750,7 +1750,19 @@ function renderAboutPhotos(){
       ? ABOUT_PHOTOS.map((p,i)=>`<button class="cert-dot ${i===0?'is-active':''}" onclick="aboutPhotoGoTo(${i})" aria-label="Ke foto ${i+1}"></button>`).join('')
       : '';
   }
-  if (ABOUT_PHOTOS.length > 1) aboutPhotoPlay();
+  const playBtn = document.getElementById('aboutPhotoPlayToggle');
+  if (ABOUT_PHOTOS.length > 1){
+    if (playBtn) playBtn.style.display = '';
+    if (REDUCE_MOTION){
+      aboutPhotoPause();
+      if (playBtn){ playBtn.textContent='▶'; playBtn.setAttribute('aria-label','Putar otomatis'); playBtn.setAttribute('aria-pressed','true'); }
+    } else {
+      aboutPhotoPlay();
+      if (playBtn){ playBtn.textContent='⏸'; playBtn.setAttribute('aria-label','Jeda putar otomatis'); playBtn.setAttribute('aria-pressed','false'); }
+    }
+  } else if (playBtn){
+    playBtn.style.display = 'none';
+  }
 }
 function aboutPhotoGoTo(i){
   if (!ABOUT_PHOTOS.length) return;
@@ -1762,6 +1774,21 @@ function aboutPhotoAdvance(){ aboutPhotoGoTo(aboutPhotoState.index + 1); }
 function aboutPhotoPlay(){
   clearInterval(aboutPhotoState.autoTimer);
   aboutPhotoState.autoTimer = setInterval(aboutPhotoAdvance, 4500);
+}
+function aboutPhotoPause(){
+  clearInterval(aboutPhotoState.autoTimer);
+  aboutPhotoState.autoTimer = null;
+}
+function toggleAboutPhotoAutoplay(){
+  const btn = document.getElementById('aboutPhotoPlayToggle');
+  const playing = !!aboutPhotoState.autoTimer;
+  if (playing){
+    aboutPhotoPause();
+    if (btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+  } else {
+    aboutPhotoPlay();
+    if (btn){ btn.textContent='⏸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+  }
 }
 
 /* ---- Document preview modal ---- */
@@ -2034,6 +2061,7 @@ document.getElementById('pageRoot').innerHTML = `
         <div class="pattern">${ic('users','icon-lg')}</div>
         <div class="about-photo-track" id="aboutPhotoTrack"></div>
         <div class="about-photo-dots" id="aboutPhotoDots"></div>
+        <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggle" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">⏸</button>
       </div>
       <div data-reveal-item>
         <span class="eyebrow">Tentang Kami</span>
