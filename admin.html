@@ -222,6 +222,7 @@ tr:hover td{ background:var(--surface); }
     <button class="nav-item is-active" data-page="products" onclick="switchPage('products')">Produk</button>
     <button class="nav-item" data-page="articles" onclick="switchPage('articles')">Artikel</button>
     <button class="nav-item" data-page="faq" onclick="switchPage('faq')">FAQ</button>
+    <button class="nav-item" data-page="gallery" onclick="switchPage('gallery')">Galeri Tentang Kami</button>
     <button class="nav-item" data-page="settings" onclick="switchPage('settings')">Pengaturan</button>
     <div class="sidebar-foot">
       <button class="nav-item" onclick="doLogout()">Keluar</button>
@@ -272,6 +273,21 @@ tr:hover td{ background:var(--surface); }
           <tbody id="faqTbody"></tbody>
         </table>
         <div id="faqEmpty" class="empty hidden">Belum ada FAQ.</div>
+      </div></div>
+    </section>
+
+    <!-- GALLERY PAGE -->
+    <section id="page-gallery" class="hidden">
+      <div class="topbar">
+        <div><div class="page-title">Galeri Tentang Kami</div><div class="page-sub">Foto-foto ini tampil sebagai slideshow otomatis di kotak "Tentang Kami" pada halaman beranda.</div></div>
+        <button class="btn btn-primary" onclick="openGalleryForm()">+ Tambah Foto</button>
+      </div>
+      <div class="card"><div class="table-wrap">
+        <table>
+          <thead><tr><th></th><th>Keterangan</th><th>Urutan</th><th>Status</th><th></th></tr></thead>
+          <tbody id="galleryTbody"></tbody>
+        </table>
+        <div id="galleryEmpty" class="empty hidden">Belum ada foto. Klik "Tambah Foto" untuk mulai. Selama belum ada foto, kotak "Tentang Kami" di beranda akan menampilkan ikon bawaan.</div>
       </div></div>
     </section>
 
@@ -343,7 +359,7 @@ if (!window.supabase){
 
 const sb = window.supabase.createClient(CFG.url, CFG.anonKey);
 
-let CACHE = { products:[], articles:[], faq:[] };
+let CACHE = { products:[], articles:[], faq:[], gallery:[] };
 const CATS_PRODUCT = { minuman:'Minuman Fermentasi', rumah:'Eco-Enzyme Rumah Tangga', perawatan:'Perawatan Diri' };
 const CATS_ARTICLE = { Edukasi:'Edukasi', Kegiatan:'Kegiatan' };
 
@@ -407,7 +423,7 @@ async function doLogout(){
 async function showApp(){
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
-  await Promise.all([loadProducts(), loadArticles(), loadFaq(), loadSettings()]);
+  await Promise.all([loadProducts(), loadArticles(), loadFaq(), loadGallery(), loadSettings()]);
 }
 
 (async function boot(){
@@ -419,7 +435,7 @@ async function showApp(){
    NAV
    ============================================================ */
 function switchPage(page){
-  ['products','articles','faq','settings'].forEach(p=>{
+  ['products','articles','faq','gallery','settings'].forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('hidden', p!==page);
   });
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
@@ -871,6 +887,120 @@ async function deleteFaq(id){
   if (error){ toast('Gagal menghapus: '+error.message, true); return; }
   toast('FAQ dihapus.');
   loadFaq();
+}
+
+/* ============================================================
+   GALERI "TENTANG KAMI" (slideshow foto di beranda)
+   Foto disimpan di storage bucket "about" dan datanya di tabel
+   about_gallery (lihat supabase-schema.sql).
+   ============================================================ */
+async function loadGallery(){
+  const { data, error } = await sb.from('about_gallery').select('*').order('sort_order', { ascending:true });
+  if (error){ toast('Gagal memuat galeri: '+error.message, true); return; }
+  CACHE.gallery = data || [];
+  renderGallery();
+}
+function renderGallery(){
+  const tbody = document.getElementById('galleryTbody');
+  const empty = document.getElementById('galleryEmpty');
+  if (CACHE.gallery.length===0){ tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  tbody.innerHTML = CACHE.gallery.map(g=>`
+    <tr>
+      <td>${g.image_url ? `<img class="thumb" src="${g.image_url}">` : `<div class="thumb"></div>`}</td>
+      <td class="cell-name">${escapeHtml(g.caption || '—')}</td>
+      <td>${g.sort_order}</td>
+      <td>${g.published ? '<span class="badge badge-on">Tayang</span>' : '<span class="badge badge-off">Draft</span>'}</td>
+      <td><div class="row-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openGalleryForm('${g.id}')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGalleryPhoto('${g.id}')">Hapus</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function openGalleryForm(id){
+  const g = id ? CACHE.gallery.find(x=>x.id===id) : null;
+  buildModal(g ? 'Edit Foto' : 'Tambah Foto', `
+    <form id="galleryForm">
+      <div class="field">
+        <label>Foto ${g?'<span class="hint">kosongkan jika tidak diganti</span>':''} <span class="hint">JPG/PNG, disarankan rasio 4:3</span></label>
+        <div class="upload-box">
+          <img id="gfImgPreview" class="upload-preview" src="${g&&g.image_url?g.image_url:''}" style="${g&&g.image_url?'':'display:none'}">
+          <input type="file" id="gfImage" accept="image/png,image/jpeg" ${g?'':'required'}>
+        </div>
+      </div>
+      <div class="field"><label>Keterangan <span class="hint">opsional, tampil di atas foto</span></label>
+        <input type="text" id="gfCaption" value="${g&&g.caption?escapeHtml(g.caption):''}">
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Urutan <span class="hint">angka kecil tampil lebih dulu</span></label>
+          <input type="number" id="gfSort" value="${g?g.sort_order:CACHE.gallery.length}">
+        </div>
+        <div class="field checkrow" style="align-self:end;padding-bottom:12px">
+          <input type="checkbox" id="gfPublished" ${!g||g.published?'checked':''}> Tayang di situs
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button type="submit" class="btn btn-primary" id="gfSubmitBtn">${g?'Simpan Perubahan':'Tambah Foto'}</button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('gfImage').addEventListener('change', (e)=>{
+    const f = e.target.files[0];
+    if (!f) return;
+    const img = document.getElementById('gfImgPreview');
+    img.src = URL.createObjectURL(f);
+    img.style.display = 'block';
+  });
+  document.getElementById('galleryForm').addEventListener('submit', (e)=>saveGalleryPhoto(e, g));
+}
+
+async function saveGalleryPhoto(e, existing){
+  e.preventDefault();
+  const btn = document.getElementById('gfSubmitBtn');
+  btn.disabled = true;
+  try{
+    const file = document.getElementById('gfImage').files[0];
+    let image_url = existing ? existing.image_url : null;
+    if (file){
+      const oldUrl = existing ? existing.image_url : null;
+      image_url = await uploadImage('about', file);
+      if (oldUrl) await deleteImageByUrl('about', oldUrl);
+    }
+    if (!image_url) throw new Error('Pilih foto terlebih dahulu.');
+
+    const payload = {
+      image_url,
+      caption: document.getElementById('gfCaption').value.trim(),
+      sort_order: Number(document.getElementById('gfSort').value)||0,
+      published: document.getElementById('gfPublished').checked
+    };
+    let error;
+    if (existing){
+      ({ error } = await sb.from('about_gallery').update(payload).eq('id', existing.id));
+    } else {
+      ({ error } = await sb.from('about_gallery').insert(payload));
+    }
+    if (error) throw error;
+    toast(existing ? 'Foto diperbarui.' : 'Foto ditambahkan.');
+    closeModal();
+    loadGallery();
+  } catch(err){
+    toast('Gagal menyimpan: '+(err.message||err), true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function deleteGalleryPhoto(id){
+  if (!confirm('Hapus foto ini?')) return;
+  const g = CACHE.gallery.find(x=>x.id===id);
+  const { error } = await sb.from('about_gallery').delete().eq('id', id);
+  if (error){ toast('Gagal menghapus: '+error.message, true); return; }
+  if (g && g.image_url) await deleteImageByUrl('about', g.image_url);
+  toast('Foto dihapus.');
+  loadGallery();
 }
 
 /* ============================================================
