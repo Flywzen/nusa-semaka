@@ -103,6 +103,13 @@ tr:hover td{ background:var(--surface); }
 .form-grid .field.full{ grid-column:1/-1; }
 .spec-row{ display:flex; gap:8px; margin-bottom:8px; }
 .spec-row input{ flex:1; }
+.repeat-row{ display:flex; gap:8px; margin-bottom:8px; align-items:flex-start; }
+.repeat-row textarea, .repeat-row input{ flex:1; }
+.repeat-row textarea{ min-height:44px; }
+.timeline-row{ border:1.5px solid var(--border); border-radius:var(--r-sm); padding:12px; margin-bottom:10px; }
+.timeline-row .field{ margin-bottom:10px; }
+.timeline-row .field:last-of-type{ margin-bottom:0; }
+.timeline-row-head{ display:flex; justify-content:flex-end; margin-bottom:-4px; }
 .upload-box{ display:flex; align-items:center; gap:14px; }
 .upload-preview{ width:64px; height:64px; border-radius:var(--r-sm); object-fit:cover; background:var(--surface-2); border:1px solid var(--border); }
 
@@ -222,6 +229,7 @@ tr:hover td{ background:var(--surface); }
     <button class="nav-item is-active" data-page="products" onclick="switchPage('products')">Produk</button>
     <button class="nav-item" data-page="articles" onclick="switchPage('articles')">Artikel</button>
     <button class="nav-item" data-page="faq" onclick="switchPage('faq')">FAQ</button>
+    <button class="nav-item" data-page="about" onclick="switchPage('about')">Tentang Kami</button>
     <button class="nav-item" data-page="gallery" onclick="switchPage('gallery')">Galeri Tentang Kami</button>
     <button class="nav-item" data-page="settings" onclick="switchPage('settings')">Pengaturan</button>
     <div class="sidebar-foot">
@@ -274,6 +282,42 @@ tr:hover td{ background:var(--surface); }
         </table>
         <div id="faqEmpty" class="empty hidden">Belum ada FAQ.</div>
       </div></div>
+    </section>
+
+    <!-- ABOUT CONTENT PAGE (Visi/Misi & Perjalanan) -->
+    <section id="page-about" class="hidden">
+      <div class="topbar">
+        <div><div class="page-title">Tentang Kami</div><div class="page-sub">Kelola judul, visi &amp; misi, dan perjalanan yang tampil di halaman "Tentang Kami".</div></div>
+      </div>
+      <div class="card" style="padding:24px;max-width:720px">
+        <form id="aboutContentForm">
+          <div class="field full"><label>Judul Halaman</label><input type="text" id="acHeroTitle"></div>
+          <div class="field full"><label>Visi <span class="hint">deskripsi singkat perusahaan, tampil di bawah judul</span></label>
+            <textarea id="acHeroLead"></textarea>
+          </div>
+
+          <div class="field full">
+            <label>Misi Kami <span class="hint">satu baris untuk satu poin misi</span></label>
+            <div id="acMisiList"></div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addMisiRow()">+ Tambah poin misi</button>
+          </div>
+
+          <div class="field full">
+            <label>Perjalanan Kami <span class="hint">urutan momen/timeline perusahaan</span></label>
+            <div id="acTimelineList"></div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="addTimelineRow()">+ Tambah momen</button>
+          </div>
+
+          <button class="btn btn-primary" type="submit" id="aboutContentSaveBtn" style="margin-top:8px">Simpan Perubahan</button>
+        </form>
+      </div>
+      <div class="card" style="padding:24px;max-width:720px;margin-top:20px">
+        <div style="font-weight:800;margin-bottom:4px">Galeri</div>
+        <p style="color:var(--text-muted);font-size:13.5px;line-height:1.6;margin:0 0 14px">
+          Foto galeri di halaman "Tentang Kami" memakai foto yang sama dengan slideshow "Tentang Kami" di beranda, jadi tidak perlu diisi dua kali — cukup kelola dari satu tempat.
+        </p>
+        <button type="button" class="btn btn-secondary" onclick="switchPage('gallery')">Kelola Galeri Tentang Kami &rarr;</button>
+      </div>
     </section>
 
     <!-- GALLERY PAGE -->
@@ -423,7 +467,7 @@ async function doLogout(){
 async function showApp(){
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
-  await Promise.all([loadProducts(), loadArticles(), loadFaq(), loadGallery(), loadSettings()]);
+  await Promise.all([loadProducts(), loadArticles(), loadFaq(), loadAboutContent(), loadGallery(), loadSettings()]);
 }
 
 (async function boot(){
@@ -435,7 +479,7 @@ async function showApp(){
    NAV
    ============================================================ */
 function switchPage(page){
-  ['products','articles','faq','gallery','settings'].forEach(p=>{
+  ['products','articles','faq','about','gallery','settings'].forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('hidden', p!==page);
   });
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
@@ -888,6 +932,78 @@ async function deleteFaq(id){
   toast('FAQ dihapus.');
   loadFaq();
 }
+
+/* ============================================================
+   TENTANG KAMI — VISI/MISI & PERJALANAN
+   Satu baris data di tabel about_content (sama polanya seperti
+   tabel settings). Galeri untuk halaman ini sengaja memakai tabel
+   about_gallery yang sama dengan galeri di beranda (lihat menu
+   "Galeri Tentang Kami"), jadi tidak dikelola di sini.
+   ============================================================ */
+let aboutContentRowId = null;
+
+async function loadAboutContent(){
+  const { data, error } = await sb.from('about_content').select('*').limit(1).maybeSingle();
+  if (error){ toast('Gagal memuat konten Tentang Kami: '+error.message, true); return; }
+  aboutContentRowId = data ? data.id : null;
+  document.getElementById('acHeroTitle').value = data && data.hero_title ? data.hero_title : '';
+  document.getElementById('acHeroLead').value = data && data.hero_lead ? data.hero_lead : '';
+
+  const misi = (data && Array.isArray(data.misi) && data.misi.length) ? data.misi : [''];
+  document.getElementById('acMisiList').innerHTML = misi.map(m=>misiRow(m)).join('');
+
+  const perjalanan = (data && Array.isArray(data.perjalanan) && data.perjalanan.length) ? data.perjalanan : [{title:'',desc:''}];
+  document.getElementById('acTimelineList').innerHTML = perjalanan.map(t=>timelineRow(t.title, t.desc)).join('');
+}
+
+function misiRow(text){
+  return `<div class="repeat-row"><input type="text" placeholder="mis. Memberdayakan masyarakat melalui pelatihan..." class="misi-text" value="${escapeHtml(text||'')}"><button type="button" class="btn btn-ghost btn-sm" onclick="this.closest('.repeat-row').remove()">✕</button></div>`;
+}
+function addMisiRow(){ document.getElementById('acMisiList').insertAdjacentHTML('beforeend', misiRow('')); }
+
+function timelineRow(title, desc){
+  return `<div class="timeline-row">
+    <div class="timeline-row-head"><button type="button" class="btn btn-ghost btn-sm" onclick="this.closest('.timeline-row').remove()">✕ Hapus</button></div>
+    <div class="field"><label>Judul Momen</label><input type="text" placeholder="mis. Membangun komunitas di Bandar Lampung" class="tl-title" value="${escapeHtml(title||'')}"></div>
+    <div class="field"><label>Keterangan</label><textarea placeholder="Deskripsi singkat momen ini" class="tl-desc">${escapeHtml(desc||'')}</textarea></div>
+  </div>`;
+}
+function addTimelineRow(){ document.getElementById('acTimelineList').insertAdjacentHTML('beforeend', timelineRow('','')); }
+
+document.getElementById('aboutContentForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const btn = document.getElementById('aboutContentSaveBtn');
+  btn.disabled = true;
+  try{
+    const misi = Array.from(document.querySelectorAll('#acMisiList .misi-text'))
+      .map(el=>el.value.trim()).filter(Boolean);
+    const perjalanan = Array.from(document.querySelectorAll('#acTimelineList .timeline-row')).map(row=>{
+      const title = row.querySelector('.tl-title').value.trim();
+      const desc = row.querySelector('.tl-desc').value.trim();
+      return (title || desc) ? { title, desc } : null;
+    }).filter(Boolean);
+
+    const payload = {
+      hero_title: document.getElementById('acHeroTitle').value.trim(),
+      hero_lead: document.getElementById('acHeroLead').value.trim(),
+      misi,
+      perjalanan
+    };
+    let error;
+    if (aboutContentRowId){
+      ({ error } = await sb.from('about_content').update(payload).eq('id', aboutContentRowId));
+    } else {
+      ({ error } = await sb.from('about_content').insert(payload));
+    }
+    if (error) throw error;
+    toast('Konten Tentang Kami disimpan.');
+    loadAboutContent();
+  } catch(err){
+    toast('Gagal menyimpan: '+(err.message||err), true);
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 /* ============================================================
    GALERI "TENTANG KAMI" (slideshow foto di beranda)

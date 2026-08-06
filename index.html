@@ -311,6 +311,13 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .timeline-title{ font-weight:700; font-size:0.9375rem; }
 .timeline-desc{ font-size:0.875rem; color:var(--text-muted); margin-top:3px; line-height:1.5; }
 
+.about-gallery-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:20px; }
+@media(min-width:640px){ .about-gallery-grid{ grid-template-columns:repeat(3,1fr); gap:18px; } }
+.about-gallery-item{ position:relative; aspect-ratio:4/3; border-radius:var(--r-card); overflow:hidden; border:1px solid var(--border); background:var(--surface-2); }
+.about-gallery-item img{ width:100%; height:100%; object-fit:cover; transition:transform 400ms var(--ease-out); }
+.about-gallery-item:hover img{ transform:scale(1.05); }
+.about-gallery-caption{ position:absolute; left:0; right:0; bottom:0; padding:10px 12px 8px; font-size:0.75rem; color:#fff; background:linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0)); }
+
 /* ============================================
    PRODUCT CARD
    ============================================ */
@@ -1182,6 +1189,80 @@ let SETTINGS = {
   youtube: ''
 };
 
+/* ============================================================
+   ABOUT CONTENT (halaman "Tentang Kami") â€” visi/misi & perjalanan.
+   Nilai di bawah ini dipakai selama data dari Supabase (tabel
+   `about_content`) belum/gagal dimuat, jadi halaman tidak pernah kosong.
+   Ikon misi berputar mengikuti daftar MISSION_ICONS di bawah.
+   ============================================================ */
+const MISSION_ICONS = ['graduation','leaf','users','sparkle'];
+let ABOUT_CONTENT = {
+  hero_title: 'PT Nusa Semaka Creativepreneur',
+  hero_lead: 'Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.',
+  misi: [
+    'Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.',
+    'Menghadirkan produk alami yang ramah lingkungan untuk kebutuhan sehari-hari.',
+    'Mendorong ekonomi kreatif berbasis komunitas di seluruh Lampung.',
+    'Mengedukasi masyarakat tentang gaya hidup yang lebih berkelanjutan.'
+  ],
+  perjalanan: [
+    { title:'Membangun komunitas di Bandar Lampung', desc:'Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.' },
+    { title:'Pelatihan Eco-Enzyme & Fruit Enzyme se-Provinsi Lampung', desc:'Menjadi fasilitator pelatihan bagi kader PKK dari berbagai kabupaten/kota di Lampung.' },
+    { title:'Berpartisipasi di Pasar Tematik Kota Metro', desc:'Memperkenalkan produk fermentasi alami langsung kepada masyarakat.' },
+    { title:'Terus tumbuh bersama komunitas', desc:'Melanjutkan misi pemberdayaan dan produk alami ke lebih banyak wilayah di Lampung.' }
+  ]
+};
+
+function applyAboutContent(a){
+  if (!a) return;
+  ABOUT_CONTENT = {
+    hero_title: a.hero_title || ABOUT_CONTENT.hero_title,
+    hero_lead: a.hero_lead || ABOUT_CONTENT.hero_lead,
+    misi: (Array.isArray(a.misi) && a.misi.length) ? a.misi : ABOUT_CONTENT.misi,
+    perjalanan: (Array.isArray(a.perjalanan) && a.perjalanan.length) ? a.perjalanan : ABOUT_CONTENT.perjalanan
+  };
+}
+
+function renderAboutContent(){
+  setText('aboutHeroTitle', ABOUT_CONTENT.hero_title);
+  setText('aboutHeroLead', ABOUT_CONTENT.hero_lead);
+
+  const misiEl = document.getElementById('aboutMissionList');
+  if (misiEl){
+    misiEl.innerHTML = ABOUT_CONTENT.misi.map((text,i)=>`
+      <div class="mission-item"><span class="mission-icon">${ic(MISSION_ICONS[i % MISSION_ICONS.length],'icon-sm')}</span><span class="mission-text">${text}</span></div>`).join('');
+  }
+
+  const timelineEl = document.getElementById('aboutTimeline');
+  if (timelineEl){
+    timelineEl.innerHTML = ABOUT_CONTENT.perjalanan.map(t=>`
+      <div class="timeline-item" data-reveal-item>
+        <div class="timeline-dot"></div>
+        <div><div class="timeline-title">${t.title||''}</div><div class="timeline-desc">${t.desc||''}</div></div>
+      </div>`).join('');
+  }
+}
+
+/* Galeri di halaman "Tentang Kami" ini SENGAJA memakai data yang sama
+   dengan galeri slideshow di beranda (tabel `about_gallery`, lihat
+   ABOUT_PHOTOS) supaya admin cukup kelola foto di satu tempat saja. */
+function renderAboutPageGallery(){
+  const section = document.getElementById('aboutGallerySection');
+  const grid = document.getElementById('aboutGalleryGrid');
+  if (!section || !grid) return;
+  if (!ABOUT_PHOTOS.length){
+    section.style.display = 'none';
+    grid.innerHTML = '';
+    return;
+  }
+  section.style.display = '';
+  grid.innerHTML = ABOUT_PHOTOS.map(p => `
+    <div class="about-gallery-item" data-reveal-item>
+      <img src="${p.image_url}" alt="${p.caption||'Foto Nusa Semaka'}" loading="lazy">
+      ${p.caption ? `<div class="about-gallery-caption">${p.caption}</div>` : ''}
+    </div>`).join('');
+}
+
 function setText(id, value){
   const el = document.getElementById(id);
   if (el && value) el.textContent = value;
@@ -2023,8 +2104,8 @@ document.getElementById('pageRoot').innerHTML = `
     </div>
     <div class="section-head" style="max-width:640px" data-reveal>
       <span class="eyebrow">Tentang Kami</span>
-      <h1 class="section-title" style="margin-top:10px; font-size:2rem">PT Nusa Semaka Creativepreneur</h1>
-      <p class="section-lead">Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.</p>
+      <h1 class="section-title" style="margin-top:10px; font-size:2rem" id="aboutHeroTitle">PT Nusa Semaka Creativepreneur</h1>
+      <p class="section-lead" id="aboutHeroLead">Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.</p>
     </div>
 
     <div class="about-grid" data-reveal-group>
@@ -2035,8 +2116,8 @@ document.getElementById('pageRoot').innerHTML = `
         <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
       <div data-reveal-item>
-        <h3 style="font-size:1.25rem; font-weight:800">Misi Kami</h3>
-        <div class="mission-list">
+        <h3 style="font-size:1.25rem; font-weight:800">Visi &amp; Misi Kami</h3>
+        <div class="mission-list" id="aboutMissionList">
           <div class="mission-item"><span class="mission-icon">${ic('graduation','icon-sm')}</span><span class="mission-text">Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.</span></div>
           <div class="mission-item"><span class="mission-icon">${ic('leaf','icon-sm')}</span><span class="mission-text">Menghadirkan produk alami yang ramah lingkungan untuk kebutuhan sehari-hari.</span></div>
           <div class="mission-item"><span class="mission-icon">${ic('users','icon-sm')}</span><span class="mission-text">Mendorong ekonomi kreatif berbasis komunitas di seluruh Lampung.</span></div>
@@ -2075,7 +2156,7 @@ document.getElementById('pageRoot').innerHTML = `
       <span class="eyebrow">Perjalanan Kami</span>
       <h2 class="section-title" style="margin-top:10px">Beberapa Momen Nusa Semaka</h2>
     </div>
-    <div class="content-measure timeline" data-reveal-group>
+    <div class="content-measure timeline" id="aboutTimeline" data-reveal-group>
       <div class="timeline-item" data-reveal-item>
         <div class="timeline-dot"></div>
         <div><div class="timeline-title">Membangun komunitas di Bandar Lampung</div><div class="timeline-desc">Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal.</div></div>
@@ -2093,6 +2174,14 @@ document.getElementById('pageRoot').innerHTML = `
         <div><div class="timeline-title">Terus tumbuh bersama komunitas</div><div class="timeline-desc">Melanjutkan misi pemberdayaan dan produk alami ke lebih banyak wilayah di Lampung.</div></div>
       </div>
     </div>
+  </div>
+
+  <div class="container section" id="aboutGallerySection" style="display:none">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Galeri Kami</span>
+      <h2 class="section-title" style="margin-top:10px">Momen &amp; Kegiatan Nusa Semaka</h2>
+    </div>
+    <div class="about-gallery-grid" id="aboutGalleryGrid" data-reveal-group></div>
   </div>
 
   <div class="container section">
@@ -2459,16 +2548,21 @@ async function loadLiveData(){
 
   try{
     const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
-    const [prodRes, artRes, faqRes, settingsRes, aboutRes] = await Promise.all([
+    const [prodRes, artRes, faqRes, settingsRes, aboutRes, aboutContentRes] = await Promise.all([
       sb.from('products').select('*').eq('published', true).order('sort_order', { ascending:true }),
       sb.from('articles').select('*').eq('published', true).order('published_at', { ascending:false }),
       sb.from('faq').select('*').order('sort_order', { ascending:true }),
       sb.from('settings').select('*').limit(1).maybeSingle(),
-      sb.from('about_gallery').select('*').eq('published', true).order('sort_order', { ascending:true })
+      sb.from('about_gallery').select('*').eq('published', true).order('sort_order', { ascending:true }),
+      sb.from('about_content').select('*').limit(1).maybeSingle()
     ]);
 
     if (!settingsRes.error && settingsRes.data){
       applySettings(settingsRes.data);
+    }
+
+    if (!aboutContentRes.error && aboutContentRes.data){
+      applyAboutContent(aboutContentRes.data);
     }
 
     if (!prodRes.error && prodRes.data && prodRes.data.length){
@@ -2524,7 +2618,9 @@ function renderApp(){
   renderFaqPreview();
   renderFaqFull();
   renderCertificates();
+  renderAboutContent();
   renderAboutPhotos();
+  renderAboutPageGallery();
   router();
 }
 

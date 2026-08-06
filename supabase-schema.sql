@@ -247,6 +247,55 @@ create policy "admin full access about_gallery" on public.about_gallery
   for all using (auth.uid() is not null) with check (auth.uid() is not null);
 
 -- ============================================================
+-- TABLE: about_content
+-- Isi halaman "Tentang Kami" (visi/misi & perjalanan) — satu baris saja,
+-- sama seperti tabel `settings`. Galeri untuk halaman ini SENGAJA tidak
+-- punya tabel sendiri — dia memakai tabel `about_gallery` yang sama
+-- dengan galeri di beranda, supaya admin cukup kelola foto di satu
+-- tempat (lihat menu "Galeri Tentang Kami" di panel admin).
+-- ============================================================
+create table if not exists public.about_content (
+  id uuid primary key default gen_random_uuid(),
+  hero_title text default 'PT Nusa Semaka Creativepreneur',
+  hero_lead text default 'Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.',
+  misi jsonb not null default '[]'::jsonb,
+  perjalanan jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_about_content_updated on public.about_content;
+create trigger trg_about_content_updated before update on public.about_content
+  for each row execute function public.set_updated_at();
+
+alter table public.about_content enable row level security;
+
+drop policy if exists "public read about_content" on public.about_content;
+create policy "public read about_content" on public.about_content
+  for select using (true);
+
+drop policy if exists "admin full access about_content" on public.about_content;
+create policy "admin full access about_content" on public.about_content
+  for all using (auth.uid() is not null) with check (auth.uid() is not null);
+
+insert into public.about_content (hero_title, hero_lead, misi, perjalanan)
+select
+  'PT Nusa Semaka Creativepreneur',
+  'Sebuah perusahaan asal Bandar Lampung yang fokus pada pemberdayaan komunitas, pelatihan, kewirausahaan kreatif, produk ramah lingkungan, dan kegiatan edukatif.',
+  '[
+    "Memberdayakan masyarakat melalui pelatihan eco-enzyme dan fermentasi.",
+    "Menghadirkan produk alami yang ramah lingkungan untuk kebutuhan sehari-hari.",
+    "Mendorong ekonomi kreatif berbasis komunitas di seluruh Lampung.",
+    "Mengedukasi masyarakat tentang gaya hidup yang lebih berkelanjutan."
+  ]'::jsonb,
+  '[
+    {"title":"Membangun komunitas di Bandar Lampung","desc":"Memulai edukasi fermentasi dan eco-enzyme dari lingkup komunitas lokal."},
+    {"title":"Pelatihan Eco-Enzyme & Fruit Enzyme se-Provinsi Lampung","desc":"Menjadi fasilitator pelatihan bagi kader PKK dari berbagai kabupaten/kota di Lampung."},
+    {"title":"Berpartisipasi di Pasar Tematik Kota Metro","desc":"Memperkenalkan produk fermentasi alami langsung kepada masyarakat."},
+    {"title":"Terus tumbuh bersama komunitas","desc":"Melanjutkan misi pemberdayaan dan produk alami ke lebih banyak wilayah di Lampung."}
+  ]'::jsonb
+where not exists (select 1 from public.about_content);
+
+-- ============================================================
 -- STORAGE — jalankan SETELAH kamu membuat bucket lewat Dashboard:
 -- Storage > New bucket > "products" (Public), "articles" (Public),
 -- "logos" (Public), "about" (Public)
