@@ -630,7 +630,8 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 
 .cart-item{ display:flex; gap:12px; padding:14px 0; border-bottom:1px solid var(--border); }
 .cart-item:last-child{ border-bottom:none; }
-.cart-item-visual{ width:56px; height:56px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.cart-item-visual{ width:56px; height:56px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.cart-item-visual img{ width:100%; height:100%; object-fit:cover; display:block; }
 .cart-item-info{ flex:1; min-width:0; }
 .cart-item-name{ font-size:0.875rem; font-weight:700; line-height:1.3; }
 .cart-item-price{ font-size:0.8125rem; color:var(--text-muted); margin-top:2px; }
@@ -1942,7 +1943,15 @@ function renderCartDrawer(){
     if(p.price){ subtotal += p.price * c.qty; } else { hasHiddenPrice = true; }
     return `
     <div class="cart-item">
-      <div class="cart-item-visual ${ct.tint}">${ic(ct.icon,'icon-sm')}</div>
+      <div class="cart-item-visual ${p.thumbnail_url ? '' : ct.tint}">
+        ${p.thumbnail_url
+          ? `<img src="${p.thumbnail_url}" alt="${p.name}" loading="lazy"
+               style="opacity:0;transition:opacity .2s"
+               onload="this.style.opacity='1'"
+               onerror="this.closest('.cart-item-visual').classList.add('${ct.tint}');this.replaceWith((()=>{const s=document.createElement('span');s.innerHTML='${ic(ct.icon,'icon-sm')}';return s.firstChild;})())">`
+          : ic(ct.icon,'icon-sm')
+        }
+      </div>
       <div class="cart-item-info">
         <div class="cart-item-name">${p.name}</div>
         <div class="cart-item-price">${p.price ? money(p.price) : 'Hubungi kami'}</div>
