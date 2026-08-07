@@ -1729,8 +1729,12 @@ function initCertCarousel(){
 let ABOUT_PHOTOS = [];
 const aboutPhotoState = { index:0, autoTimer:null };
 const ABOUT_VISUAL_TARGETS = [
-  { visualId:'aboutVisual', trackId:'aboutPhotoTrack', dotsId:'aboutPhotoDots', playBtnId:'aboutPhotoPlayToggle' },
-  { visualId:'aboutVisualDetail', trackId:'aboutPhotoTrackDetail', dotsId:'aboutPhotoDotsDetail', playBtnId:'aboutPhotoPlayToggleDetail' }
+  // showInlineCaption: apakah caption ditampilkan sebagai overlay di ATAS foto.
+  // Kotak di halaman detail sudah punya teks caption terpisah di BAWAH kotak
+  // (lihat syncAboutVisualDetailCaption), jadi overlay-nya dimatikan supaya
+  // captionnya tidak tampil dobel.
+  { visualId:'aboutVisual', trackId:'aboutPhotoTrack', dotsId:'aboutPhotoDots', playBtnId:'aboutPhotoPlayToggle', showInlineCaption:true },
+  { visualId:'aboutVisualDetail', trackId:'aboutPhotoTrackDetail', dotsId:'aboutPhotoDotsDetail', playBtnId:'aboutPhotoPlayToggleDetail', showInlineCaption:false }
 ];
 // Teks kecil di bawah kotak foto pada halaman detail Tentang Kami. Ikut
 // menyesuaikan caption foto yang sedang tampil (diisi lewat menu admin
@@ -1776,7 +1780,7 @@ function renderAboutPhotos(){
     track.innerHTML = ABOUT_PHOTOS.map((p,i)=>`
       <div class="about-photo-slide ${i===0?'is-active':''}">
         <img src="${p.image_url}" alt="${(p.caption||'Foto Nusa Semaka')}" loading="lazy">
-        ${p.caption ? `<div class="about-photo-caption">${p.caption}</div>` : ''}
+        ${(t.showInlineCaption && p.caption) ? `<div class="about-photo-caption">${p.caption}</div>` : ''}
       </div>`).join('');
     if (dots){
       dots.innerHTML = ABOUT_PHOTOS.length > 1
