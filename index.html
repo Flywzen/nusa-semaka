@@ -772,11 +772,6 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   .ambient-blob, .cta-band::before{ animation:none !important; opacity:0.25; }
 }
 </style>
-<!-- Vercel Web Analytics -->
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -1737,6 +1732,18 @@ const ABOUT_VISUAL_TARGETS = [
   { visualId:'aboutVisual', trackId:'aboutPhotoTrack', dotsId:'aboutPhotoDots', playBtnId:'aboutPhotoPlayToggle' },
   { visualId:'aboutVisualDetail', trackId:'aboutPhotoTrackDetail', dotsId:'aboutPhotoDotsDetail', playBtnId:'aboutPhotoPlayToggleDetail' }
 ];
+// Teks kecil di bawah kotak foto pada halaman detail Tentang Kami. Ikut
+// menyesuaikan caption foto yang sedang tampil (diisi lewat menu admin
+// "Galeri Tentang Kami"). Kalau foto belum punya caption, atau belum ada
+// foto sama sekali, pakai teks bawaan ini.
+const ABOUT_VISUAL_DETAIL_FALLBACK_CAPTION = 'Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung';
+
+function syncAboutVisualDetailCaption(){
+  const el = document.getElementById('aboutVisualDetailCaption');
+  if (!el) return;
+  const current = ABOUT_PHOTOS[aboutPhotoState.index];
+  el.textContent = (current && current.caption) ? current.caption : ABOUT_VISUAL_DETAIL_FALLBACK_CAPTION;
+}
 
 function setAboutPlayButtonsState(isPlaying){
   ABOUT_VISUAL_TARGETS.forEach(t => {
@@ -1778,6 +1785,7 @@ function renderAboutPhotos(){
     }
     if (playBtn) playBtn.style.display = ABOUT_PHOTOS.length > 1 ? '' : 'none';
   });
+  syncAboutVisualDetailCaption();
   if (!foundAnyTarget || !ABOUT_PHOTOS.length) return;
   if (ABOUT_PHOTOS.length > 1){
     if (REDUCE_MOTION){
@@ -1796,6 +1804,7 @@ function aboutPhotoGoTo(i){
     document.querySelectorAll('#'+t.trackId+' .about-photo-slide').forEach((el,i2)=> el.classList.toggle('is-active', i2===aboutPhotoState.index));
     document.querySelectorAll('#'+t.dotsId+' .cert-dot').forEach((d,i2)=> d.classList.toggle('is-active', i2===aboutPhotoState.index));
   });
+  syncAboutVisualDetailCaption();
 }
 function aboutPhotoAdvance(){ aboutPhotoGoTo(aboutPhotoState.index + 1); }
 function aboutPhotoPlay(){
@@ -2182,7 +2191,7 @@ document.getElementById('pageRoot').innerHTML = `
           <div class="about-photo-dots" id="aboutPhotoDotsDetail"></div>
           <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggleDetail" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">â¸</button>
         </div>
-        <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
+        <p id="aboutVisualDetailCaption" style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
       <div data-reveal-item>
         <h3 style="font-size:1.25rem; font-weight:800">Misi Kami</h3>
