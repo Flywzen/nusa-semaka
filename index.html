@@ -720,7 +720,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .text-center{ text-align:center; }
 
 /* ============================================================
-   MOTION â€” senior motion pass (GSAP-driven JS + supporting CSS)
+   MOTION — senior motion pass (GSAP-driven JS + supporting CSS)
    ============================================================ */
 
 /* ---- Navbar scroll transition ---- */
@@ -942,9 +942,9 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   <div class="modal modal--doc" role="dialog" aria-modal="true" aria-label="Pratinjau dokumen">
     <div class="doc-modal-head">
       <div>
-        <div class="doc-modal-org" id="certModalOrg">â€”</div>
-        <div class="doc-modal-title" id="certModalTitle">â€”</div>
-        <div class="cert-desc" style="margin-top:4px;-webkit-line-clamp:1">No. <span id="certModalNumber">â€”</span></div>
+        <div class="doc-modal-org" id="certModalOrg">—</div>
+        <div class="doc-modal-title" id="certModalTitle">—</div>
+        <div class="cert-desc" style="margin-top:4px;-webkit-line-clamp:1">No. <span id="certModalNumber">—</span></div>
       </div>
       <button class="modal-close" style="flex-shrink:0" onclick="closeCertModal()" aria-label="Tutup">
         <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1085,7 +1085,7 @@ let CERTIFICATES = [
   {
     id:2,
     category:'Halal',
-    title:'Sertifikat Halal â€” Kombucha',
+    title:'Sertifikat Halal — Kombucha',
     org:'BPJPH Kementerian Agama RI',
     number:'18110038620761225ID',
     desc:'Jaminan kehalalan produk Kombucha Nusa Semaka, diterbitkan resmi oleh Badan Penyelenggara Jaminan Produk Halal.',
@@ -1095,7 +1095,7 @@ let CERTIFICATES = [
   {
     id:3,
     category:'PIRT',
-    title:'Sertifikat PIRT â€” Kombucha FE',
+    title:'Sertifikat PIRT — Kombucha FE',
     org:'DPMPTSP Kab. Lampung Selatan',
     number:'P-IRT 1091801020868-30',
     desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Kombucha FE, berlaku hingga 30 Oktober 2030.',
@@ -1105,7 +1105,7 @@ let CERTIFICATES = [
   {
     id:4,
     category:'PIRT',
-    title:'Sertifikat PIRT â€” Fruit Enzyme',
+    title:'Sertifikat PIRT — Fruit Enzyme',
     org:'DPMPTSP Kab. Lampung Selatan',
     number:'P-IRT 1091801040868-30',
     desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Fruit Enzyme, berlaku hingga 31 Oktober 2030.',
@@ -1116,7 +1116,7 @@ let CERTIFICATES = [
     id:5,
     category:'Merek',
     title:'Sertifikat Merek Terdaftar',
-    org:'Kemenkumham RI â€” Ditjen KI',
+    org:'Kemenkumham RI — Ditjen KI',
     number:'IDM001364965',
     desc:'Hak merek resmi atas nama Nusa Semaka Creativepreneur, dilindungi hukum hingga 22 Januari 2035.',
     thumb:'assets/certificates/thumbs/sertifikat-merek.jpg',
@@ -1154,6 +1154,8 @@ function ic(name, cls){
     shield:'<path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/>',
     box:'<path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
     download:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+    pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+    play:'<polygon points="6 3 20 12 6 21 6 3"/>',
   };
   const extra = name==='arrowRight' ? ' icon-nudge' : '';
   return `<svg class="${(cls||'icon')+extra}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${map[name]||''}</svg>`;
@@ -1186,7 +1188,7 @@ let SETTINGS = {
   email: 'nusa.semaka@gmail.com',
   phone: '0811-1011-6812',
   whatsapp: WA_NUMBER,
-  business_hours: 'Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB',
+  business_hours: 'Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB',
   google_maps: '',
   instagram: 'https://instagram.com/nusasemakaofficial',
   facebook: '',
@@ -1222,7 +1224,7 @@ function syncWaLinks(){
 
 /* ============================================================
    APPLY SETTINGS ke seluruh elemen di halaman (header, footer,
-   halaman Kontak) Ã¢â‚¬â€ dipanggil setelah data settings dari
+   halaman Kontak) â€” dipanggil setelah data settings dari
    Supabase berhasil dimuat.
    ============================================================ */
 function applySettings(s){
@@ -1677,10 +1679,10 @@ function toggleCertAutoplay(){
   const playing = !!certState.autoTimer;
   if(playing){
     certPause();
-    if(btn){ btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
   } else {
     certPlay();
-    if(btn){ btn.textContent='â¸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+    if(btn){ btn.textContent='⏸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
   }
 }
 
@@ -1711,7 +1713,7 @@ function initCertCarousel(){
   if (REDUCE_MOTION) {
     certPause();
     const btn = document.getElementById('certPlayToggle');
-    if(btn){ btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
   } else {
     certPlay();
   }
@@ -1753,8 +1755,8 @@ function setAboutPlayButtonsState(isPlaying){
   ABOUT_VISUAL_TARGETS.forEach(t => {
     const btn = document.getElementById(t.playBtnId);
     if (!btn) return;
-    if (isPlaying){ btn.textContent='â¸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
-    else { btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    if (isPlaying){ btn.innerHTML=ic('pause','icon-sm'); btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+    else { btn.innerHTML=ic('play','icon-sm'); btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
   });
 }
 function renderAboutPhotos(){
@@ -2095,7 +2097,7 @@ document.getElementById('pageRoot').innerHTML = `
         <div class="pattern">${ic('users','icon-lg')}</div>
         <div class="about-photo-track" id="aboutPhotoTrack"></div>
         <div class="about-photo-dots" id="aboutPhotoDots"></div>
-        <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggle" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">â¸</button>
+        <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggle" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">${ic('pause','icon-sm')}</button>
       </div>
       <div data-reveal-item>
         <span class="eyebrow">Tentang Kami</span>
@@ -2118,7 +2120,7 @@ document.getElementById('pageRoot').innerHTML = `
       <button class="cert-nav-btn cert-nav-prev" onclick="certNav(-1)" aria-label="Sertifikat sebelumnya">${ic('arrowRight','icon-sm')}</button>
       <div class="cert-track" id="certTrack"></div>
       <button class="cert-nav-btn cert-nav-next" onclick="certNav(1)" aria-label="Sertifikat berikutnya">${ic('arrowRight','icon-sm')}</button>
-      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">â¸</button>
+      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">⏸</button>
     </div>
     <div class="cert-dots" id="certDots"></div>
   </div>
@@ -2188,7 +2190,7 @@ document.getElementById('pageRoot').innerHTML = `
           <div class="pattern">${ic('leaf','icon-lg')}</div>
           <div class="about-photo-track" id="aboutPhotoTrackDetail"></div>
           <div class="about-photo-dots" id="aboutPhotoDotsDetail"></div>
-          <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggleDetail" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">â¸</button>
+          <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggleDetail" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">${ic('pause','icon-sm')}</button>
         </div>
         <p id="aboutVisualDetailCaption" style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
@@ -2456,7 +2458,7 @@ document.getElementById('pageRoot').innerHTML = `
         </div>
         <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('clock','icon-sm')}</span>
-          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB</div></div>
+          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB</div></div>
         </div>
         <div class="contact-card" style="border:none; padding-left:0; background:transparent" data-reveal-item>
           <div>
@@ -2486,7 +2488,7 @@ document.getElementById('pageRoot').innerHTML = `
 `;
 
 /* ============================================================
-   MOTION SYSTEM (GSAP) Ã¢â‚¬â€ senior motion pass
+   MOTION SYSTEM (GSAP) â€” senior motion pass
    Hero entrance, idle float, navbar transition, scroll reveals.
    Everything here degrades gracefully if GSAP fails to load, and
    is neutralized under prefers-reduced-motion.
@@ -2560,7 +2562,7 @@ function initNavbarScroll(){
 
 /* ---- 2. Scroll reveal (IntersectionObserver detects entry, GSAP handles the tween) ----
    IntersectionObserver is used instead of ScrollTrigger because this app toggles whole
-   "pages" via display:none/block rather than real navigation Ã¢â‚¬â€ IO naturally re-checks
+   "pages" via display:none/block rather than real navigation â€” IO naturally re-checks
    elements once they become visible again, with no manual refresh() bookkeeping needed. */
 function initScrollReveals(){
   if(!('IntersectionObserver' in window)) return; // elements are visible by default, nothing to fix
@@ -2609,11 +2611,11 @@ initScrollReveals();
 initNavbarScroll();
 
 /* ============================================================
-   LIVE DATA (Supabase) Ã¢â‚¬â€ opsional.
+   LIVE DATA (Supabase) â€” opsional.
    Kalau config.js sudah diisi & Supabase bisa diakses, data di atas
    (PRODUCTS/ARTICLES/FAQS) akan ditimpa dengan data terbaru dari
    database. Kalau belum dikonfigurasi atau gagal diakses, situs
-   tetap jalan normal pakai data statis di atas Ã¢â‚¬â€ tidak pernah kosong.
+   tetap jalan normal pakai data statis di atas â€” tidak pernah kosong.
    ============================================================ */
 function withTimeout(promise, ms){
   return Promise.race([
