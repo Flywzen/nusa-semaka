@@ -720,7 +720,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .text-center{ text-align:center; }
 
 /* ============================================================
-   MOTION — senior motion pass (GSAP-driven JS + supporting CSS)
+   MOTION â€” senior motion pass (GSAP-driven JS + supporting CSS)
    ============================================================ */
 
 /* ---- Navbar scroll transition ---- */
@@ -942,9 +942,9 @@ input,textarea{ font-family:inherit; font-size:1rem; }
   <div class="modal modal--doc" role="dialog" aria-modal="true" aria-label="Pratinjau dokumen">
     <div class="doc-modal-head">
       <div>
-        <div class="doc-modal-org" id="certModalOrg">—</div>
-        <div class="doc-modal-title" id="certModalTitle">—</div>
-        <div class="cert-desc" style="margin-top:4px;-webkit-line-clamp:1">No. <span id="certModalNumber">—</span></div>
+        <div class="doc-modal-org" id="certModalOrg">â€”</div>
+        <div class="doc-modal-title" id="certModalTitle">â€”</div>
+        <div class="cert-desc" style="margin-top:4px;-webkit-line-clamp:1">No. <span id="certModalNumber">â€”</span></div>
       </div>
       <button class="modal-close" style="flex-shrink:0" onclick="closeCertModal()" aria-label="Tutup">
         <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1085,7 +1085,7 @@ let CERTIFICATES = [
   {
     id:2,
     category:'Halal',
-    title:'Sertifikat Halal — Kombucha',
+    title:'Sertifikat Halal â€” Kombucha',
     org:'BPJPH Kementerian Agama RI',
     number:'18110038620761225ID',
     desc:'Jaminan kehalalan produk Kombucha Nusa Semaka, diterbitkan resmi oleh Badan Penyelenggara Jaminan Produk Halal.',
@@ -1095,7 +1095,7 @@ let CERTIFICATES = [
   {
     id:3,
     category:'PIRT',
-    title:'Sertifikat PIRT — Kombucha FE',
+    title:'Sertifikat PIRT â€” Kombucha FE',
     org:'DPMPTSP Kab. Lampung Selatan',
     number:'P-IRT 1091801020868-30',
     desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Kombucha FE, berlaku hingga 30 Oktober 2030.',
@@ -1105,7 +1105,7 @@ let CERTIFICATES = [
   {
     id:4,
     category:'PIRT',
-    title:'Sertifikat PIRT — Fruit Enzyme',
+    title:'Sertifikat PIRT â€” Fruit Enzyme',
     org:'DPMPTSP Kab. Lampung Selatan',
     number:'P-IRT 1091801040868-30',
     desc:'Izin Produksi Pangan Industri Rumah Tangga untuk Fruit Enzyme, berlaku hingga 31 Oktober 2030.',
@@ -1116,7 +1116,7 @@ let CERTIFICATES = [
     id:5,
     category:'Merek',
     title:'Sertifikat Merek Terdaftar',
-    org:'Kemenkumham RI — Ditjen KI',
+    org:'Kemenkumham RI â€” Ditjen KI',
     number:'IDM001364965',
     desc:'Hak merek resmi atas nama Nusa Semaka Creativepreneur, dilindungi hukum hingga 22 Januari 2035.',
     thumb:'assets/certificates/thumbs/sertifikat-merek.jpg',
@@ -1186,7 +1186,7 @@ let SETTINGS = {
   email: 'nusa.semaka@gmail.com',
   phone: '0811-1011-6812',
   whatsapp: WA_NUMBER,
-  business_hours: 'Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB',
+  business_hours: 'Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB',
   google_maps: '',
   instagram: 'https://instagram.com/nusasemakaofficial',
   facebook: '',
@@ -1222,7 +1222,7 @@ function syncWaLinks(){
 
 /* ============================================================
    APPLY SETTINGS ke seluruh elemen di halaman (header, footer,
-   halaman Kontak) â€” dipanggil setelah data settings dari
+   halaman Kontak) Ã¢â‚¬â€ dipanggil setelah data settings dari
    Supabase berhasil dimuat.
    ============================================================ */
 function applySettings(s){
@@ -1677,10 +1677,10 @@ function toggleCertAutoplay(){
   const playing = !!certState.autoTimer;
   if(playing){
     certPause();
-    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    if(btn){ btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
   } else {
     certPlay();
-    if(btn){ btn.textContent='⏸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+    if(btn){ btn.textContent='â¸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
   }
 }
 
@@ -1711,7 +1711,7 @@ function initCertCarousel(){
   if (REDUCE_MOTION) {
     certPause();
     const btn = document.getElementById('certPlayToggle');
-    if(btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    if(btn){ btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
   } else {
     certPlay();
   }
@@ -1719,56 +1719,78 @@ function initCertCarousel(){
 
 /* ============================================================
    ABOUT PHOTO SLIDESHOW
-   Foto ini idealnya dikelola dari panel admin (tabel `about_gallery`
-   di Supabase, lihat loadLiveData()). Kalau belum ada foto sama
-   sekali, kotak "Tentang Kami" tetap tampil dengan ikon seperti biasa.
+   Foto ini dikelola dari panel admin (tabel `about_gallery` di
+   Supabase, lihat loadLiveData()). Dipakai di DUA tempat: kotak
+   "Tentang Kami" di Beranda, dan kotak foto di halaman detail
+   "Tentang Kami" (/#/tentang) - keduanya menampilkan foto yang sama
+   dari sumber data yang sama. Kalau belum ada foto sama sekali,
+   kedua kotak tetap tampil dengan ikon bawaan seperti biasa.
    ============================================================ */
 let ABOUT_PHOTOS = [];
 const aboutPhotoState = { index:0, autoTimer:null };
+const ABOUT_VISUAL_TARGETS = [
+  { visualId:'aboutVisual', trackId:'aboutPhotoTrack', dotsId:'aboutPhotoDots', playBtnId:'aboutPhotoPlayToggle' },
+  { visualId:'aboutVisualDetail', trackId:'aboutPhotoTrackDetail', dotsId:'aboutPhotoDotsDetail', playBtnId:'aboutPhotoPlayToggleDetail' }
+];
 
+function setAboutPlayButtonsState(isPlaying){
+  ABOUT_VISUAL_TARGETS.forEach(t => {
+    const btn = document.getElementById(t.playBtnId);
+    if (!btn) return;
+    if (isPlaying){ btn.textContent='â¸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+    else { btn.textContent='â–¶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+  });
+}
 function renderAboutPhotos(){
-  const track = document.getElementById('aboutPhotoTrack');
-  const dots = document.getElementById('aboutPhotoDots');
-  const visual = document.getElementById('aboutVisual');
-  if (!track || !visual) return;
   clearInterval(aboutPhotoState.autoTimer);
-  if (!ABOUT_PHOTOS.length){
-    visual.classList.remove('has-photos');
-    track.innerHTML = '';
-    if (dots) dots.innerHTML = '';
-    return;
-  }
-  visual.classList.add('has-photos');
+  aboutPhotoState.autoTimer = null;
   aboutPhotoState.index = 0;
-  track.innerHTML = ABOUT_PHOTOS.map((p,i)=>`
-    <div class="about-photo-slide ${i===0?'is-active':''}">
-      <img src="${p.image_url}" alt="${(p.caption||'Foto Nusa Semaka')}" loading="lazy">
-      ${p.caption ? `<div class="about-photo-caption">${p.caption}</div>` : ''}
-    </div>`).join('');
-  if (dots){
-    dots.innerHTML = ABOUT_PHOTOS.length > 1
-      ? ABOUT_PHOTOS.map((p,i)=>`<button class="cert-dot ${i===0?'is-active':''}" onclick="aboutPhotoGoTo(${i})" aria-label="Ke foto ${i+1}"></button>`).join('')
-      : '';
-  }
-  const playBtn = document.getElementById('aboutPhotoPlayToggle');
+  let foundAnyTarget = false;
+  ABOUT_VISUAL_TARGETS.forEach(t => {
+    const track = document.getElementById(t.trackId);
+    const dots = document.getElementById(t.dotsId);
+    const visual = document.getElementById(t.visualId);
+    const playBtn = document.getElementById(t.playBtnId);
+    if (!track || !visual) return;
+    foundAnyTarget = true;
+    if (!ABOUT_PHOTOS.length){
+      visual.classList.remove('has-photos');
+      track.innerHTML = '';
+      if (dots) dots.innerHTML = '';
+      if (playBtn) playBtn.style.display = 'none';
+      return;
+    }
+    visual.classList.add('has-photos');
+    track.innerHTML = ABOUT_PHOTOS.map((p,i)=>`
+      <div class="about-photo-slide ${i===0?'is-active':''}">
+        <img src="${p.image_url}" alt="${(p.caption||'Foto Nusa Semaka')}" loading="lazy">
+        ${p.caption ? `<div class="about-photo-caption">${p.caption}</div>` : ''}
+      </div>`).join('');
+    if (dots){
+      dots.innerHTML = ABOUT_PHOTOS.length > 1
+        ? ABOUT_PHOTOS.map((p,i)=>`<button class="cert-dot ${i===0?'is-active':''}" onclick="aboutPhotoGoTo(${i})" aria-label="Ke foto ${i+1}"></button>`).join('')
+        : '';
+    }
+    if (playBtn) playBtn.style.display = ABOUT_PHOTOS.length > 1 ? '' : 'none';
+  });
+  if (!foundAnyTarget || !ABOUT_PHOTOS.length) return;
   if (ABOUT_PHOTOS.length > 1){
-    if (playBtn) playBtn.style.display = '';
     if (REDUCE_MOTION){
       aboutPhotoPause();
-      if (playBtn){ playBtn.textContent='▶'; playBtn.setAttribute('aria-label','Putar otomatis'); playBtn.setAttribute('aria-pressed','true'); }
+      setAboutPlayButtonsState(false);
     } else {
       aboutPhotoPlay();
-      if (playBtn){ playBtn.textContent='⏸'; playBtn.setAttribute('aria-label','Jeda putar otomatis'); playBtn.setAttribute('aria-pressed','false'); }
+      setAboutPlayButtonsState(true);
     }
-  } else if (playBtn){
-    playBtn.style.display = 'none';
   }
 }
 function aboutPhotoGoTo(i){
   if (!ABOUT_PHOTOS.length) return;
   aboutPhotoState.index = ((i % ABOUT_PHOTOS.length) + ABOUT_PHOTOS.length) % ABOUT_PHOTOS.length;
-  document.querySelectorAll('#aboutPhotoTrack .about-photo-slide').forEach((el,i2)=> el.classList.toggle('is-active', i2===aboutPhotoState.index));
-  document.querySelectorAll('#aboutPhotoDots .cert-dot').forEach((d,i2)=> d.classList.toggle('is-active', i2===aboutPhotoState.index));
+  ABOUT_VISUAL_TARGETS.forEach(t => {
+    document.querySelectorAll('#'+t.trackId+' .about-photo-slide').forEach((el,i2)=> el.classList.toggle('is-active', i2===aboutPhotoState.index));
+    document.querySelectorAll('#'+t.dotsId+' .cert-dot').forEach((d,i2)=> d.classList.toggle('is-active', i2===aboutPhotoState.index));
+  });
 }
 function aboutPhotoAdvance(){ aboutPhotoGoTo(aboutPhotoState.index + 1); }
 function aboutPhotoPlay(){
@@ -1780,14 +1802,13 @@ function aboutPhotoPause(){
   aboutPhotoState.autoTimer = null;
 }
 function toggleAboutPhotoAutoplay(){
-  const btn = document.getElementById('aboutPhotoPlayToggle');
   const playing = !!aboutPhotoState.autoTimer;
   if (playing){
     aboutPhotoPause();
-    if (btn){ btn.textContent='▶'; btn.setAttribute('aria-label','Putar otomatis'); btn.setAttribute('aria-pressed','true'); }
+    setAboutPlayButtonsState(false);
   } else {
     aboutPhotoPlay();
-    if (btn){ btn.textContent='⏸'; btn.setAttribute('aria-label','Jeda putar otomatis'); btn.setAttribute('aria-pressed','false'); }
+    setAboutPlayButtonsState(true);
   }
 }
 
@@ -2061,7 +2082,7 @@ document.getElementById('pageRoot').innerHTML = `
         <div class="pattern">${ic('users','icon-lg')}</div>
         <div class="about-photo-track" id="aboutPhotoTrack"></div>
         <div class="about-photo-dots" id="aboutPhotoDots"></div>
-        <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggle" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">⏸</button>
+        <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggle" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">â¸</button>
       </div>
       <div data-reveal-item>
         <span class="eyebrow">Tentang Kami</span>
@@ -2084,7 +2105,7 @@ document.getElementById('pageRoot').innerHTML = `
       <button class="cert-nav-btn cert-nav-prev" onclick="certNav(-1)" aria-label="Sertifikat sebelumnya">${ic('arrowRight','icon-sm')}</button>
       <div class="cert-track" id="certTrack"></div>
       <button class="cert-nav-btn cert-nav-next" onclick="certNav(1)" aria-label="Sertifikat berikutnya">${ic('arrowRight','icon-sm')}</button>
-      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">⏸</button>
+      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">â¸</button>
     </div>
     <div class="cert-dots" id="certDots"></div>
   </div>
@@ -2150,8 +2171,11 @@ document.getElementById('pageRoot').innerHTML = `
 
     <div class="about-grid" data-reveal-group>
       <div data-reveal-item>
-        <div class="about-visual tint-minuman" style="margin-bottom:8px">
-          ${ic('leaf','icon-lg')}
+        <div class="about-visual tint-minuman" id="aboutVisualDetail" style="margin-bottom:8px">
+          <div class="pattern">${ic('leaf','icon-lg')}</div>
+          <div class="about-photo-track" id="aboutPhotoTrackDetail"></div>
+          <div class="about-photo-dots" id="aboutPhotoDotsDetail"></div>
+          <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggleDetail" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">â¸</button>
         </div>
         <p style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
@@ -2419,7 +2443,7 @@ document.getElementById('pageRoot').innerHTML = `
         </div>
         <div class="contact-card" data-reveal-item>
           <span class="contact-card-icon">${ic('clock','icon-sm')}</span>
-          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin â€“ Sabtu, 08.00 â€“ 17.00 WIB</div></div>
+          <div><div class="contact-card-title">Jam Operasional</div><div class="contact-card-desc" id="contactHoursText">Senin Ã¢â‚¬â€œ Sabtu, 08.00 Ã¢â‚¬â€œ 17.00 WIB</div></div>
         </div>
         <div class="contact-card" style="border:none; padding-left:0; background:transparent" data-reveal-item>
           <div>
@@ -2449,7 +2473,7 @@ document.getElementById('pageRoot').innerHTML = `
 `;
 
 /* ============================================================
-   MOTION SYSTEM (GSAP) â€” senior motion pass
+   MOTION SYSTEM (GSAP) Ã¢â‚¬â€ senior motion pass
    Hero entrance, idle float, navbar transition, scroll reveals.
    Everything here degrades gracefully if GSAP fails to load, and
    is neutralized under prefers-reduced-motion.
@@ -2523,7 +2547,7 @@ function initNavbarScroll(){
 
 /* ---- 2. Scroll reveal (IntersectionObserver detects entry, GSAP handles the tween) ----
    IntersectionObserver is used instead of ScrollTrigger because this app toggles whole
-   "pages" via display:none/block rather than real navigation â€” IO naturally re-checks
+   "pages" via display:none/block rather than real navigation Ã¢â‚¬â€ IO naturally re-checks
    elements once they become visible again, with no manual refresh() bookkeeping needed. */
 function initScrollReveals(){
   if(!('IntersectionObserver' in window)) return; // elements are visible by default, nothing to fix
@@ -2572,11 +2596,11 @@ initScrollReveals();
 initNavbarScroll();
 
 /* ============================================================
-   LIVE DATA (Supabase) â€” opsional.
+   LIVE DATA (Supabase) Ã¢â‚¬â€ opsional.
    Kalau config.js sudah diisi & Supabase bisa diakses, data di atas
    (PRODUCTS/ARTICLES/FAQS) akan ditimpa dengan data terbaru dari
    database. Kalau belum dikonfigurasi atau gagal diakses, situs
-   tetap jalan normal pakai data statis di atas â€” tidak pernah kosong.
+   tetap jalan normal pakai data statis di atas Ã¢â‚¬â€ tidak pernah kosong.
    ============================================================ */
 function withTimeout(promise, ms){
   return Promise.race([
