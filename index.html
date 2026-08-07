@@ -1964,20 +1964,14 @@ function renderCartDrawer(){
       <div class="field-error">Nama tidak boleh kosong.</div>
     </div>
     <div class="field">
-      <label for="custNotes">Catatan (opsional)</label>
-      <textarea id="custNotes" maxlength="500" placeholder="Contoh: tolong dikirim setelah jam 4 sore" oninput="updateCharCount()"></textarea>
-      <div class="char-count"><span id="notesCount">0</span>/500</div>
+      <label for="custAddress">Alamat (opsional)</label>
+      <textarea id="custAddress" maxlength="300" placeholder="Contoh: Jl. Contoh No. 12, Kelurahan, Kecamatan, Bandar Lampung"></textarea>
     </div>
     <button class="btn btn-whatsapp btn-block" style="margin-top:16px" onclick="sendWhatsAppOrder()">
       ${ic('phone','icon-sm')} Kirim Pesanan via WhatsApp
     </button>
     <p class="cart-note">${hasHiddenPrice? '*Beberapa produk perlu konfirmasi harga langsung dari tim kami. ':''}Kami akan membalas melalui WhatsApp. Tidak ada pembayaran online di website ini.</p>
   `;
-}
-
-function updateCharCount(){
-  const el = document.getElementById('custNotes');
-  document.getElementById('notesCount').textContent = el.value.length;
 }
 
 function openCart(){
@@ -2008,14 +2002,15 @@ function sendWhatsAppOrder(){
     return;
   }
   nameField.classList.remove('has-error');
-  const notes = document.getElementById('custNotes').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
 
   let lines = cart.map(c=>{
     const p = PRODUCTS.find(x=>x.id===c.id);
     return `- ${p.name} x${c.qty}`;
   });
 
-  let msg = `Halo Nusa Semaka Creativepreneur,\n\nNama saya: ${name}\n\nSaya ingin memesan:\n${lines.join('\n')}\n\nCatatan Tambahan:\n${notes || '-'}\n\nTerima kasih.`;
+  const addressBlock = address ? `\n\nAlamat Pengiriman:\n${address}` : '';
+  let msg = `Halo Nusa Semaka Creativepreneur,\n\nNama saya: ${name}\n\nSaya ingin memesan:\n${lines.join('\n')}${addressBlock}\n\nTerima kasih.`;
 
   window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
   showToast('Membuka WhatsApp dengan detail pesanan Anda...');
