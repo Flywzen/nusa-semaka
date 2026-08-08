@@ -734,9 +734,13 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 
 /* ---- Hero ambient background movement (decorative, non-interactive) ---- */
 .hero{ position:relative; overflow:hidden; }
-.hero-ambient{ position:absolute; inset:-15% -8% auto -8%; height:130%; overflow:hidden; z-index:0; pointer-events:none; }
+.hero-ambient{
+  position:absolute; inset:-15% -8% auto -8%; height:130%; overflow:hidden; z-index:0; pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse 70% 65% at 50% 40%, #000 0%, transparent 72%);
+  mask-image:radial-gradient(ellipse 70% 65% at 50% 40%, #000 0%, transparent 72%);
+}
 .hero-grid{ position:relative; z-index:1; }
-.ambient-blob{ position:absolute; border-radius:50%; filter:blur(60px); will-change:transform; }
+.ambient-blob{ position:absolute; border-radius:50%; filter:blur(70px); will-change:transform; }
 .ambient-blob-1{ width:320px; height:320px; background:var(--gold-tint); opacity:0.55; top:-40px; left:-30px; animation:driftA 26s ease-in-out infinite alternate; }
 .ambient-blob-2{ width:280px; height:280px; background:var(--maroon-tint); opacity:0.45; bottom:-60px; right:-20px; animation:driftB 30s ease-in-out infinite alternate; }
 @keyframes driftA{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(36px,26px) scale(1.08); } }
