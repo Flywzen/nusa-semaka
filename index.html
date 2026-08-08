@@ -52,7 +52,7 @@
 }
 
 *,*::before,*::after{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+html{ scroll-behavior:smooth; overflow-x:hidden; }
 body{
   margin:0;
   font-family:var(--font);
@@ -60,6 +60,8 @@ body{
   color:var(--text);
   -webkit-font-smoothing:antialiased;
   line-height:1.5;
+  overflow-x:hidden;
+  width:100%;
 }
 img{ max-width:100%; display:block; }
 button{ font-family:inherit; cursor:pointer; }
@@ -731,7 +733,7 @@ input,textarea{ font-family:inherit; font-size:1rem; }
 .header-wrap.is-scrolled .header{ background:rgba(250,247,240,0.97); box-shadow:var(--shadow-2); border-color:var(--border-strong); }
 
 /* ---- Hero ambient background movement (decorative, non-interactive) ---- */
-.hero{ position:relative; }
+.hero{ position:relative; overflow:hidden; }
 .hero-ambient{ position:absolute; inset:-15% -8% auto -8%; height:130%; overflow:hidden; z-index:0; pointer-events:none; }
 .hero-grid{ position:relative; z-index:1; }
 .ambient-blob{ position:absolute; border-radius:50%; filter:blur(60px); will-change:transform; }
@@ -2123,6 +2125,7 @@ document.getElementById('pageRoot').innerHTML = `
       <button class="cert-nav-btn cert-nav-prev" onclick="certNav(-1)" aria-label="Sertifikat sebelumnya">${ic('arrowRight','icon-sm')}</button>
       <div class="cert-track" id="certTrack"></div>
       <button class="cert-nav-btn cert-nav-next" onclick="certNav(1)" aria-label="Sertifikat berikutnya">${ic('arrowRight','icon-sm')}</button>
+      <button class="btn btn-ghost btn-icon" id="certPlayToggle" onclick="toggleCertAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false">⏸</button>
     </div>
     <div class="cert-dots" id="certDots"></div>
   </div>
@@ -2192,6 +2195,7 @@ document.getElementById('pageRoot').innerHTML = `
           <div class="pattern">${ic('leaf','icon-lg')}</div>
           <div class="about-photo-track" id="aboutPhotoTrackDetail"></div>
           <div class="about-photo-dots" id="aboutPhotoDotsDetail"></div>
+          <button class="btn btn-ghost btn-icon" id="aboutPhotoPlayToggleDetail" onclick="toggleAboutPhotoAutoplay()" aria-label="Jeda putar otomatis" aria-pressed="false" style="display:none;position:absolute;bottom:14px;right:14px;z-index:2">${ic('pause','icon-sm')}</button>
         </div>
         <p id="aboutVisualDetailCaption" style="font-size:0.8125rem; color:var(--text-muted); text-align:center">Pelatihan eco-enzyme bersama kader PKK se-Provinsi Lampung</p>
       </div>
